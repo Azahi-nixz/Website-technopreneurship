@@ -1,0 +1,16 @@
+{
+  "name": "commercial-ecommerce-website",
+  "version": "1.0.0",
+  "description": "Commercial e-commerce website frontend tests",
+  "type": "module",
+  "scripts": {
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "build:css": "tailwindcss -i app/static/css/input.css -o app/static/css/output.css --minify"
+  },
+  "devDependencies": {
+    "vitest": "1.6.0",
+    "fast-check": "3.19.0",
+    "@vitest/coverage-v8": "1.6.0"
+  }
+}

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="" />
+  <title>Order Confirmed — LUXE STORE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: { 400: '#D4AF37', 500: '#B8960C', 600: '#9A7D0A' },
+            navy: { 900: '#0A0E1A', 800: '#0F1629', 700: '#1A2340' },
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          animation: {
+            'slide-down': 'slideDown 0.3s ease-out',
+            'fade-in': 'fadeIn 0.6s ease-out',
+            'slide-up': 'slideUp 0.6s ease-out',
+            'bounce-in': 'bounceIn 0.7s cubic-bezier(0.34,1.56,0.64,1)',
+          },
+          keyframes: {
+            slideDown: { '0%': { transform: 'translateY(-10px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+            fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+            slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+            bounceIn: { '0%': { transform: 'scale(0)', opacity: '0' }, '60%': { transform: 'scale(1.1)' }, '100%': { transform: 'scale(1)', opacity: '1' } },
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+    body { background-color: #0A0E1A; color: #f1f5f9; }
+    .nav-link { position: relative; color: #cbd5e1; transition: color 0.2s; padding-bottom: 2px; }
+    .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background-color: #D4AF37; transition: width 0.2s; }
+    .nav-link:hover { color: #D4AF37; }
+    .nav-link:hover::after { width: 100%; }
+    .btn-gold { background: linear-gradient(135deg, #D4AF37 0%, #B8960C 100%); color: #0A0E1A; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s, filter 0.2s; min-height: 44px; }
+    .btn-gold:hover { transform: scale(1.03); box-shadow: 0 6px 20px rgba(212,175,55,0.35); filter: brightness(1.08); }
+    .btn-ghost { color: #94a3b8; background: transparent; border: 1.5px solid rgba(148,163,184,0.25); font-weight: 500; transition: color 0.2s, border-color 0.2s; min-height: 44px; }
+    .btn-ghost:hover { color: #D4AF37; border-color: #D4AF37; }
+    .mobile-menu { display: none; }
+    .mobile-menu.open { display: block; }
+    .success-ring {
+      width: 96px; height: 96px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(212,175,55,0.15) 0%, transparent 70%);
+      border: 2px solid rgba(212,175,55,0.4);
+      display: flex; align-items: center; justify-content: center;
+      animation: bounceIn 0.7s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes bounceIn { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+    .skeleton { background: linear-gradient(90deg, #1A2340 25%, #243050 50%, #1A2340 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  </style>
+</head>
+<body class="font-sans bg-navy-900 text-slate-100 min-h-screen">
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-40 bg-navy-900/95 backdrop-blur-md border-b border-gold-400/10">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
+      <div class="flex items-center justify-between h-16">
+        <a href="/" class="flex items-center gap-2 group min-h-[44px]" aria-label="LUXE STORE home">
+          <span class="text-gold-400 text-xl group-hover:scale-110 transition-transform duration-200" aria-hidden="true">◆</span>
+          <span class="text-lg font-bold tracking-widest text-white uppercase" data-content-key="brand_name">Luxe Store</span>
+        </a>
+        <div class="hidden sm:flex items-center gap-8">
+          <a href="/" class="nav-link text-sm font-medium min-h-[44px] flex items-center">Home</a>
+          <a href="/" class="nav-link text-sm font-medium min-h-[44px] flex items-center">Products</a>
+          <a href="/cart" class="nav-link text-sm font-medium min-h-[44px] flex items-center">Cart</a>
+          <a href="/orders" class="nav-link text-sm font-medium min-h-[44px] flex items-center">Orders</a>
+        </div>
+        <div class="hidden sm:flex items-center gap-3">
+          <div id="user-menu-auth" class="hidden items-center gap-3">
+            <span id="user-email-display" class="text-sm text-gray-400 truncate max-w-[160px]"></span>
+            <button id="logout-btn" class="btn-ghost text-xs px-3 py-2 rounded-lg min-h-[44px]">Sign Out</button>
+          </div>
+          <a id="login-link" href="/login" class="btn-gold text-sm px-4 py-2 rounded-lg min-h-[44px] flex items-center">Sign In</a>
+        </div>
+        <button id="hamburger-btn" class="sm:hidden flex flex-col gap-1.5 p-2 min-w-[44px] min-h-[44px] items-center justify-center rounded-lg hover:bg-navy-700 transition-colors duration-200" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="block w-5 h-0.5 bg-gray-300"></span>
+          <span class="block w-5 h-0.5 bg-gray-300"></span>
+          <span class="block w-5 h-0.5 bg-gray-300"></span>
+        </button>
+      </div>
+      <div id="mobile-menu" class="mobile-menu sm:hidden border-t border-gold-400/10 py-4">
+        <div class="flex flex-col gap-1">
+          <a href="/" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center">Home</a>
+          <a href="/" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center">Products</a>
+          <a href="/cart" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center">Cart</a>
+          <a href="/orders" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center">Orders</a>
+          <div class="pt-2 border-t border-gold-400/10 mt-2">
+            <div id="mobile-user-auth" class="hidden flex-col gap-2">
+              <span id="mobile-user-email" class="text-sm text-gray-400 px-2"></span>
+              <button id="mobile-logout-btn" class="btn-ghost text-sm px-4 py-2 rounded-lg min-h-[44px] text-left">Sign Out</button>
+            </div>
+            <a id="mobile-login-link" href="/login" class="btn-gold text-sm px-4 py-2 rounded-lg min-h-[44px] flex items-center justify-center">Sign In</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main content -->
+  <main class="max-w-2xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
+
+    <!-- Loading state -->
+    <div id="confirmation-skeleton" class="text-center space-y-6">
+      <div class="skeleton w-24 h-24 rounded-full mx-auto"></div>
+      <div class="skeleton h-8 rounded w-64 mx-auto"></div>
+      <div class="skeleton h-4 rounded w-48 mx-auto"></div>
+      <div class="skeleton h-40 rounded-xl"></div>
+    </div>
+
+    <!-- Confirmation content -->
+    <div id="confirmation-content" class="hidden text-center">
+
+      <!-- Success icon -->
+      <div class="flex justify-center mb-6">
+        <div class="success-ring" role="img" aria-label="Order confirmed">
+          <svg class="w-12 h-12 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="animate-slide-up">
+        <h1 class="text-3xl sm:text-4xl font-bold text-white mb-3">Order Confirmed!</h1>
+        <p class="text-gray-400 text-base mb-2">Thank you for your purchase. Your order has been placed successfully.</p>
+
+        <!-- Order ID -->
+        <div class="inline-flex items-center gap-2 bg-navy-800 border border-gold-400/20 rounded-lg px-4 py-2 mt-2 mb-8">
+          <span class="text-gray-400 text-sm">Order ID:</span>
+          <span id="order-id-display" class="font-mono text-gold-400 text-sm font-semibold"></span>
+          <button
+            id="copy-order-id"
+            class="text-gray-500 hover:text-gold-400 transition-colors duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
+            aria-label="Copy order ID"
+            title="Copy order ID"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Order items summary -->
+        <div id="order-items-container" class="bg-navy-800 rounded-2xl border border-gold-400/10 p-6 mb-8 text-left">
+          <h2 class="text-base font-semibold text-white mb-4">Order Summary</h2>
+          <div id="order-items-list" class="space-y-3 mb-4">
+          </div>
+          <div class="border-t border-gold-400/10 pt-4 flex justify-between items-center">
+            <span class="text-gray-400 font-medium">Total</span>
+            <span id="order-total-display" class="text-gold-400 font-bold text-xl"></span>
+          </div>
+        </div>
+
+        <!-- What's next -->
+        <div class="bg-navy-800/50 rounded-xl border border-gold-400/10 p-5 mb-8 text-left">
+          <h3 class="text-sm font-semibold text-white mb-3">What happens next?</h3>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li class="flex items-start gap-2">
+              <span class="text-gold-400 mt-0.5" aria-hidden="true">✓</span>
+              You'll receive a confirmation email shortly
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-gold-400 mt-0.5" aria-hidden="true">✓</span>
+              Your order will be processed within 1–2 business days
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-gold-400 mt-0.5" aria-hidden="true">✓</span>
+              Estimated delivery: 5–10 business days
+            </li>
+          </ul>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="/" class="btn-gold inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+            </svg>
+            Continue Shopping
+          </a>
+          <a href="/orders" class="btn-ghost inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            View All Orders
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div id="confirmation-error" class="hidden text-center py-12">
+      <div class="text-red-400 text-5xl mb-4" aria-hidden="true">!</div>
+      <h2 class="text-xl font-semibold text-white mb-2">Order details unavailable</h2>
+      <p class="text-gray-400 mb-6">We couldn't load your order details, but your order was placed successfully.</p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="/" class="btn-gold inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base">Continue Shopping</a>
+        <a href="/orders" class="btn-ghost inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base">View Orders</a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-navy-800 border-t border-gold-400/10 mt-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-gray-600">
+      &copy; 2024 LUXE STORE. All rights reserved.
+    </div>
+  </footer>
+
+  <script type="module">
+    function getCsrfToken() {
+      return document.querySelector('meta[name="csrf-token"]')?.content || '';
+    }
+
+    function formatPrice(price) {
+      return '₱' + (parseFloat(price) || 0).toFixed(2);
+    }
+
+    function formatDate(dateStr) {
+      try {
+        return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      } catch { return dateStr; }
+    }
+
+    // Auth
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/v1/auth/me');
+        if (res.ok) {
+          const user = await res.json();
+          document.getElementById('user-menu-auth').classList.remove('hidden');
+          document.getElementById('user-menu-auth').classList.add('flex');
+          document.getElementById('user-email-display').textContent = user.email || '';
+          document.getElementById('login-link').classList.add('hidden');
+          document.getElementById('mobile-user-auth').classList.remove('hidden');
+          document.getElementById('mobile-user-auth').classList.add('flex');
+          document.getElementById('mobile-user-email').textContent = user.email || '';
+          document.getElementById('mobile-login-link').classList.add('hidden');
+        }
+      } catch { /* ignore */ }
+    }
+
+    async function logout() {
+      try {
+        await fetch('/api/v1/auth/logout', { method: 'POST', headers: { 'X-CSRF-Token': getCsrfToken() } });
+      } finally { window.location.href = '/login'; }
+    }
+    document.getElementById('logout-btn').addEventListener('click', logout);
+    document.getElementById('mobile-logout-btn').addEventListener('click', logout);
+
+    // Hamburger
+    document.getElementById('hamburger-btn').addEventListener('click', () => {
+      const menu = document.getElementById('mobile-menu');
+      const btn = document.getElementById('hamburger-btn');
+      const isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    // Copy order ID
+    document.getElementById('copy-order-id').addEventListener('click', () => {
+      const id = document.getElementById('order-id-display').textContent;
+      if (id && navigator.clipboard) {
+        navigator.clipboard.writeText(id).then(() => {
+          const btn = document.getElementById('copy-order-id');
+          btn.innerHTML = '<svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+          setTimeout(() => {
+            btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>';
+          }, 2000);
+        });
+      }
+    });
+
+    // Load order details
+    async function loadOrderDetails() {
+      // Order ID is in the URL path: /orders/<id>/confirmation
+      const pathParts = window.location.pathname.split('/');
+      // path: ['', 'orders', '<id>', 'confirmation']
+      const orderId = pathParts[2] || new URLSearchParams(window.location.search).get('order_id');
+
+      if (!orderId) {
+        document.getElementById('confirmation-skeleton').classList.add('hidden');
+        document.getElementById('confirmation-error').classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/v1/orders/${orderId}`);
+        document.getElementById('confirmation-skeleton').classList.add('hidden');
+
+        if (!res.ok) {
+          // Show partial confirmation with just the order ID
+          document.getElementById('order-id-display').textContent = orderId;
+          document.getElementById('order-items-container').classList.add('hidden');
+          document.getElementById('confirmation-content').classList.remove('hidden');
+          return;
+        }
+
+        const order = await res.json();
+
+        // Populate order ID
+        document.getElementById('order-id-display').textContent = order.id || orderId;
+
+        // Populate items
+        const itemsList = document.getElementById('order-items-list');
+        const items = order.items || [];
+        if (items.length > 0) {
+          items.forEach(item => {
+            const row = document.createElement('div');
+            row.className = 'flex items-center justify-between gap-3';
+            row.innerHTML = `
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-navy-700 border border-gold-400/10 overflow-hidden">
+                  ${item.product?.images?.[0]?.image_url
+                    ? `<img src="${item.product.images[0].image_url}" alt="${item.product?.name || ''}" class="w-full h-full object-cover" loading="lazy" />`
+                    : '<div class="w-full h-full flex items-center justify-center"><span class="text-gray-600 text-xs">◆</span></div>'}
+                </div>
+                <div class="min-w-0">
+                  <p class="text-white text-sm font-medium truncate">${item.product?.name || 'Product'}</p>
+                  <p class="text-gray-400 text-xs">Qty: ${item.quantity} × ${formatPrice(item.unit_price)}</p>
+                </div>
+              </div>
+              <p class="text-white font-semibold text-sm flex-shrink-0">${formatPrice((parseFloat(item.unit_price) || 0) * item.quantity)}</p>`;
+            itemsList.appendChild(row);
+          });
+        } else {
+          itemsList.innerHTML = '<p class="text-gray-400 text-sm">Order items will be available shortly.</p>';
+        }
+
+        // Total
+        document.getElementById('order-total-display').textContent = formatPrice(order.total_amount || 0);
+
+        document.getElementById('confirmation-content').classList.remove('hidden');
+      } catch {
+        document.getElementById('confirmation-skeleton').classList.add('hidden');
+        // Still show success with order ID if available
+        if (orderId) {
+          document.getElementById('order-id-display').textContent = orderId;
+          document.getElementById('order-items-container').classList.add('hidden');
+          document.getElementById('confirmation-content').classList.remove('hidden');
+        } else {
+          document.getElementById('confirmation-error').classList.remove('hidden');
+        }
+      }
+    }
+
+    checkAuth();
+    loadOrderDetails();
+
+    // Apply persisted theme, content, and CSRF token
+    (async () => {
+      try {
+        const [tr, cr, csrf] = await Promise.all([
+          fetch('/api/v1/theme'), fetch('/api/v1/content'), fetch('/api/v1/csrf-token')
+        ]);
+        if (tr.ok) {
+          const t = await tr.json();
+          const root = document.documentElement;
+          if (t.accent_color) root.style.setProperty('--accent-color', t.accent_color);
+          if (t.background_color) { root.style.setProperty('--bg-color', t.background_color); document.body.style.backgroundColor = t.background_color; }
+          if (t.font_family) { root.style.setProperty('--font-family', t.font_family); document.body.style.fontFamily = "'" + t.font_family + "', system-ui, sans-serif"; }
+        }
+        if (cr.ok) {
+          const c = await cr.json();
+          if (c.site_title) document.title = c.site_title;
+          document.querySelectorAll('[data-content-key]').forEach(el => {
+            const key = el.getAttribute('data-content-key');
+            if (key && c[key] !== undefined) el.textContent = c[key];
+          });
+        }
+        if (csrf.ok) {
+          const d = await csrf.json();
+          const meta = document.querySelector('meta[name="csrf-token"]');
+          if (meta) meta.setAttribute('content', d.csrf_token);
+        }
+      } catch { /* ignore */ }
+    })();
+  </script>
+</body>
+</html>
