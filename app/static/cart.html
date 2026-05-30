@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="" />
+  <title>Cart — LUXE STORE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: { 400: '#D4AF37', 500: '#B8960C', 600: '#9A7D0A' },
+            navy: { 900: '#0A0E1A', 800: '#0F1629', 700: '#1A2340' },
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+        },
+      },
+    }
+  </script>
+  <style>
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+    body { background-color: #0A0E1A; color: #f1f5f9; }
+    .nav-link { position: relative; color: #cbd5e1; transition: color 0.2s; padding-bottom: 2px; }
+    .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background-color: #D4AF37; transition: width 0.2s; }
+    .nav-link:hover { color: #D4AF37; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link.active { color: #D4AF37; }
+    .nav-link.active::after { width: 100%; }
+    .btn-gold { background: linear-gradient(135deg, #D4AF37 0%, #B8960C 100%); color: #0A0E1A; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s, filter 0.2s; min-height: 44px; }
+    .btn-gold:hover { transform: scale(1.03); box-shadow: 0 6px 20px rgba(212,175,55,0.35); filter: brightness(1.08); }
+    .btn-gold:active { transform: scale(0.97); }
+    .btn-ghost { color: #94a3b8; background: transparent; border: 1.5px solid rgba(148,163,184,0.25); font-weight: 500; transition: color 0.2s, border-color 0.2s, transform 0.2s; min-height: 44px; }
+    .btn-ghost:hover { color: #D4AF37; border-color: #D4AF37; }
+    .qty-btn { background: rgba(26,35,64,0.8); border: 1px solid rgba(212,175,55,0.2); color: #D4AF37; width: 36px; height: 36px; min-width: 44px; min-height: 44px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s, transform 0.2s; font-size: 1.1rem; font-weight: 600; }
+    .qty-btn:hover { background: rgba(212,175,55,0.15); transform: scale(1.1); }
+    .qty-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .remove-btn { color: #f87171; background: transparent; border: 1px solid rgba(248,113,113,0.2); border-radius: 8px; padding: 6px 10px; min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.2s; cursor: pointer; }
+    .remove-btn:hover { background: rgba(248,113,113,0.1); transform: scale(1.05); }
+    .cart-item { transition: opacity 0.3s, transform 0.3s; }
+    .cart-item.removing { opacity: 0; transform: translateX(20px); }
+    .mobile-menu { display: none; }
+    .mobile-menu.open { display: block; }
+    .toast { background: rgba(15,22,41,0.95); border: 1px solid rgba(212,175,55,0.3); color: #f1f5f9; padding: 12px 16px; border-radius: 8px; font-size: 0.875rem; box-shadow: 0 8px 24px rgba(0,0,0,0.4); animation: slideDown 0.3s ease-out; transition: opacity 0.5s; }
+    @keyframes slideDown { 0% { transform: translateY(-10px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    .skeleton { background: linear-gradient(90deg, #1A2340 25%, #243050 50%, #1A2340 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  </style>
+</head>
+<body class="font-sans bg-navy-900 text-slate-100 min-h-screen">
+
+  <!-- Notification area -->
+  <div id="notification-area" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full" aria-live="polite"></div>
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-40 bg-navy-900/95 backdrop-blur-md border-b border-gold-400/10">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
+      <div class="flex items-center justify-between h-16">
+        <a href="/" class="flex items-center gap-2 group min-h-[44px]" aria-label="LUXE STORE home">
+          <span class="text-gold-400 text-xl group-hover:scale-110 transition-transform duration-200" aria-hidden="true">◆</span>
+          <span class="text-lg font-bold tracking-widest text-white uppercase" data-content-key="brand_name">Luxe Store</span>
+        </a>
+        <div class="hidden sm:flex items-center gap-8">
+          <a href="/" class="nav-link text-sm font-medium min-h-[44px] flex items-center" data-content-key="nav_home_label">Home</a>
+          <a href="/#products" class="nav-link text-sm font-medium min-h-[44px] flex items-center" data-content-key="nav_products_label">Products</a>
+          <a href="/cart" class="nav-link active text-sm font-medium min-h-[44px] flex items-center" data-content-key="nav_cart_label">Cart</a>
+          <a href="/orders" class="nav-link text-sm font-medium min-h-[44px] flex items-center" data-content-key="nav_orders_label">Orders</a>
+        </div>
+        <div class="hidden sm:flex items-center gap-3">
+          <div id="user-menu-auth" class="hidden items-center gap-3">
+            <span id="user-email-display" class="text-sm text-gray-400 truncate max-w-[160px]"></span>
+            <button id="logout-btn" class="btn-ghost text-xs px-3 py-2 rounded-lg min-h-[44px]">Sign Out</button>
+          </div>
+          <a id="login-link" href="/login" class="btn-gold text-sm px-4 py-2 rounded-lg min-h-[44px] flex items-center" data-content-key="cta_sign_in">Sign In</a>
+        </div>
+        <button id="hamburger-btn" class="sm:hidden flex flex-col gap-1.5 p-2 min-w-[44px] min-h-[44px] items-center justify-center rounded-lg hover:bg-navy-700 transition-colors duration-200" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="block w-5 h-0.5 bg-gray-300"></span>
+          <span class="block w-5 h-0.5 bg-gray-300"></span>
+          <span class="block w-5 h-0.5 bg-gray-300"></span>
+        </button>
+      </div>
+      <div id="mobile-menu" class="mobile-menu sm:hidden border-t border-gold-400/10 py-4">
+        <div class="flex flex-col gap-1">
+          <a href="/" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center">Home</a>
+          <a href="/#products" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center">Products</a>
+          <a href="/cart" class="nav-link active text-sm font-medium px-2 py-3 min-h-[44px] flex items-center">Cart</a>
+          <a href="/orders" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center">Orders</a>
+          <div class="pt-2 border-t border-gold-400/10 mt-2">
+            <div id="mobile-user-auth" class="hidden flex-col gap-2">
+              <span id="mobile-user-email" class="text-sm text-gray-400 px-2"></span>
+              <button id="mobile-logout-btn" class="btn-ghost text-sm px-4 py-2 rounded-lg min-h-[44px] text-left">Sign Out</button>
+            </div>
+            <a id="mobile-login-link" href="/login" class="btn-gold text-sm px-4 py-2 rounded-lg min-h-[44px] flex items-center justify-center">Sign In</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Page header -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-4">
+    <h1 class="text-3xl font-bold text-white">Shopping Cart</h1>
+    <p class="text-gray-400 mt-1 text-sm">Review your selected items</p>
+  </div>
+
+  <!-- Main content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- Loading skeleton -->
+    <div id="cart-skeleton" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 space-y-4">
+        <div class="skeleton h-28 rounded-xl"></div>
+        <div class="skeleton h-28 rounded-xl"></div>
+        <div class="skeleton h-28 rounded-xl"></div>
+      </div>
+      <div class="skeleton h-64 rounded-xl"></div>
+    </div>
+
+    <!-- Empty cart state -->
+    <div id="cart-empty" class="hidden text-center py-24">
+      <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-navy-800 border border-gold-400/20 mb-6">
+        <svg class="w-10 h-10 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-3" data-content-key="empty_cart_message">Your cart is empty</h2>
+      <p class="text-gray-400 mb-8 max-w-sm mx-auto">Looks like you haven't added anything yet. Explore our premium collection.</p>
+      <a href="/" class="btn-gold inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Continue Shopping
+      </a>
+    </div>
+
+    <!-- Cart content -->
+    <div id="cart-content" class="hidden" style="display:none">
+
+      <!-- Cart items -->
+      <div class="lg:col-span-2">
+        <div id="cart-items-list" class="space-y-4" aria-label="Cart items" role="list">
+        </div>
+      </div>
+
+      <!-- Order summary sidebar -->
+      <aside class="lg:col-span-1">
+        <div class="bg-navy-800 rounded-2xl border border-gold-400/10 p-6 sticky top-24">
+          <h2 class="text-lg font-bold text-white mb-6">Order Summary</h2>
+
+          <div class="space-y-3 mb-6">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-400">Subtotal (<span id="item-count">0</span> items)</span>
+              <span class="text-white font-medium" id="subtotal-display">₱0.00</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-400">Shipping</span>
+              <span class="text-green-400 font-medium">Free</span>
+            </div>
+            <div class="border-t border-gold-400/10 pt-3 flex justify-between">
+              <span class="text-white font-semibold">Total</span>
+              <span class="text-gold-400 font-bold text-xl" id="total-display">₱0.00</span>
+            </div>
+          </div>
+
+          <button
+            id="checkout-btn"
+            class="btn-gold w-full rounded-xl px-6 py-4 text-base flex items-center justify-center gap-2"
+            onclick="handleCheckout()"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Proceed to Checkout
+          </button>
+
+          <a href="/" class="mt-4 flex items-center justify-center gap-2 text-sm text-gray-400 hover:text-gold-400 transition-colors duration-200 min-h-[44px]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Continue Shopping
+          </a>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Error state -->
+    <div id="cart-error" class="hidden text-center py-24">
+      <h2 class="text-xl font-semibold text-white mb-2">Failed to load cart</h2>
+      <p class="text-gray-400 mb-6">There was an error loading your cart.</p>
+      <button onclick="loadCart()" class="btn-gold px-6 py-3 rounded-lg">Try Again</button>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-navy-800 border-t border-gold-400/10 mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-gray-600">
+      &copy; 2024 LUXE STORE. All rights reserved.
+    </div>
+  </footer>
+
+  <script type="module">
+    function getCsrfToken() {
+      return document.querySelector('meta[name="csrf-token"]')?.content || '';
+    }
+
+    async function initCsrfToken() {
+      try {
+        const res = await fetch('/api/v1/csrf-token');
+        if (res.ok) {
+          const data = await res.json();
+          const meta = document.querySelector('meta[name="csrf-token"]');
+          if (meta) meta.setAttribute('content', data.csrf_token);
+        }
+      } catch { /* ignore */ }
+    }
+
+    async function applyPersistedTheme() {
+      try {
+        const res = await fetch('/api/v1/theme');
+        if (!res.ok) return;
+        const t = await res.json();
+        const root = document.documentElement;
+        if (t.accent_color) root.style.setProperty('--accent-color', t.accent_color);
+        if (t.background_color) { root.style.setProperty('--bg-color', t.background_color); document.body.style.backgroundColor = t.background_color; }
+        if (t.font_family) { root.style.setProperty('--font-family', t.font_family); document.body.style.fontFamily = "'" + t.font_family + "', system-ui, sans-serif"; }
+      } catch { /* ignore */ }
+    }
+
+    async function applyPersistedContent() {
+      try {
+        const res = await fetch('/api/v1/content');
+        if (!res.ok) return;
+        const c = await res.json();
+        if (c.site_title) document.title = c.site_title;
+        document.querySelectorAll('[data-content-key]').forEach(el => {
+          const key = el.getAttribute('data-content-key');
+          if (key && c[key] !== undefined) el.textContent = c[key];
+        });
+      } catch { /* ignore */ }
+    }
+
+    function formatPrice(price) {
+      return '₱' + (parseFloat(price) || 0).toFixed(2);
+    }
+
+    function showNotification(message, type = 'info') {
+      const area = document.getElementById('notification-area');
+      const toast = document.createElement('div');
+      const colors = type === 'success'
+        ? 'border-green-500/40 text-green-300'
+        : type === 'error'
+        ? 'border-red-500/40 text-red-300'
+        : 'border-gold-400/30 text-gray-200';
+      toast.className = `toast border ${colors}`;
+      toast.setAttribute('role', 'status');
+      toast.textContent = message;
+      area.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 3000);
+    }
+
+    // Auth
+    let currentUser = null;
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/v1/auth/me');
+        if (res.ok) {
+          currentUser = await res.json();
+          document.getElementById('user-menu-auth').classList.remove('hidden');
+          document.getElementById('user-menu-auth').classList.add('flex');
+          document.getElementById('user-email-display').textContent = currentUser.email || '';
+          document.getElementById('login-link').classList.add('hidden');
+          document.getElementById('mobile-user-auth').classList.remove('hidden');
+          document.getElementById('mobile-user-auth').classList.add('flex');
+          document.getElementById('mobile-user-email').textContent = currentUser.email || '';
+          document.getElementById('mobile-login-link').classList.add('hidden');
+        } else {
+          window.location.href = `/login?return_to=${encodeURIComponent(window.location.pathname)}`;
+        }
+      } catch {
+        window.location.href = `/login?return_to=${encodeURIComponent(window.location.pathname)}`;
+      }
+    }
+
+    async function logout() {
+      try {
+        await fetch('/api/v1/auth/logout', { method: 'POST', headers: { 'X-CSRF-Token': getCsrfToken() } });
+      } finally { window.location.href = '/login'; }
+    }
+    document.getElementById('logout-btn').addEventListener('click', logout);
+    document.getElementById('mobile-logout-btn').addEventListener('click', logout);
+
+    // Hamburger
+    document.getElementById('hamburger-btn').addEventListener('click', () => {
+      const menu = document.getElementById('mobile-menu');
+      const btn = document.getElementById('hamburger-btn');
+      const isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    // Cart state
+    let cartItems = [];
+
+    function recalcTotal() {
+      const total = cartItems.reduce((sum, item) => sum + (parseFloat(item.unit_price) || 0) * item.quantity, 0);
+      const count = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('subtotal-display').textContent = formatPrice(total);
+      document.getElementById('total-display').textContent = formatPrice(total);
+      document.getElementById('item-count').textContent = count;
+    }
+
+    function renderCartItem(item) {
+      const el = document.createElement('div');
+      el.className = 'cart-item bg-navy-800 rounded-2xl border border-gold-400/10 p-4 sm:p-5 flex gap-4';
+      el.setAttribute('role', 'listitem');
+      el.setAttribute('data-item-id', item.id);
+
+      const imgUrl = item.product?.images?.[0]?.image_url || '';
+      const imgHtml = imgUrl
+        ? `<img src="${imgUrl}" alt="${item.product?.name || 'Product'}" class="w-full h-full object-cover" loading="lazy" />`
+        : `<div class="w-full h-full flex items-center justify-center bg-navy-700"><span class="text-gray-600 text-xs">No image</span></div>`;
+
+      el.innerHTML = `
+        <div class="flex-shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-navy-700 border border-gold-400/10">
+          ${imgHtml}
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start justify-between gap-2">
+            <h3 class="text-white font-semibold text-sm sm:text-base truncate">${item.product?.name || 'Unknown Product'}</h3>
+            <button
+              class="remove-btn flex-shrink-0"
+              aria-label="Remove ${item.product?.name || 'item'} from cart"
+              data-item-id="${item.id}"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+            </button>
+          </div>
+          <p class="text-gold-400 font-semibold text-sm mt-1">${formatPrice(item.unit_price)} each</p>
+          <div class="flex items-center justify-between mt-3">
+            <div class="flex items-center gap-2" role="group" aria-label="Quantity for ${item.product?.name || 'item'}">
+              <button class="qty-btn qty-dec" data-item-id="${item.id}" aria-label="Decrease quantity" ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
+              <span class="text-white font-semibold text-sm w-8 text-center qty-display" aria-live="polite">${item.quantity}</span>
+              <button class="qty-btn qty-inc" data-item-id="${item.id}" aria-label="Increase quantity">+</button>
+            </div>
+            <p class="text-white font-bold text-sm sm:text-base line-total">${formatPrice((parseFloat(item.unit_price) || 0) * item.quantity)}</p>
+          </div>
+        </div>`;
+
+      // Remove button
+      el.querySelector('.remove-btn').addEventListener('click', () => removeItem(item.id, el));
+
+      // Quantity buttons
+      el.querySelector('.qty-dec').addEventListener('click', () => updateQuantity(item.id, item.quantity - 1, el));
+      el.querySelector('.qty-inc').addEventListener('click', () => updateQuantity(item.id, item.quantity + 1, el));
+
+      return el;
+    }
+
+    async function updateQuantity(itemId, newQty, el) {
+      if (newQty < 1) return;
+      const item = cartItems.find(i => i.id === itemId);
+      if (!item) return;
+
+      const decBtn = el.querySelector('.qty-dec');
+      const incBtn = el.querySelector('.qty-inc');
+      decBtn.disabled = true;
+      incBtn.disabled = true;
+
+      try {
+        const res = await fetch(`/api/v1/cart/items/${itemId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': getCsrfToken() },
+          body: JSON.stringify({ quantity: newQty }),
+        });
+        if (res.ok) {
+          item.quantity = newQty;
+          el.querySelector('.qty-display').textContent = newQty;
+          el.querySelector('.line-total').textContent = formatPrice((parseFloat(item.unit_price) || 0) * newQty);
+          decBtn.disabled = newQty <= 1;
+          recalcTotal();
+        } else {
+          showNotification('Failed to update quantity.', 'error');
+        }
+      } catch {
+        showNotification('Network error.', 'error');
+      } finally {
+        decBtn.disabled = newQty <= 1;
+        incBtn.disabled = false;
+      }
+    }
+
+    async function removeItem(itemId, el) {
+      el.classList.add('removing');
+      try {
+        const res = await fetch(`/api/v1/cart/items/${itemId}`, {
+          method: 'DELETE',
+          headers: { 'X-CSRF-Token': getCsrfToken() },
+        });
+        if (res.ok) {
+          cartItems = cartItems.filter(i => i.id !== itemId);
+          setTimeout(() => {
+            el.remove();
+            recalcTotal();
+            if (cartItems.length === 0) showEmptyCart();
+          }, 300);
+          showNotification('Item removed from cart.', 'info');
+        } else {
+          el.classList.remove('removing');
+          showNotification('Failed to remove item.', 'error');
+        }
+      } catch {
+        el.classList.remove('removing');
+        showNotification('Network error.', 'error');
+      }
+    }
+
+    function showEmptyCart() {
+      const cartContent = document.getElementById('cart-content');
+      cartContent.style.display = 'none';
+      cartContent.className = 'hidden';
+      document.getElementById('cart-empty').classList.remove('hidden');
+    }
+
+    window.handleCheckout = async function() {
+      const btn = document.getElementById('checkout-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Processing…';
+      try {
+        const res = await fetch('/api/v1/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': getCsrfToken() },
+          body: JSON.stringify({}),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const orderId = data.id || data.order_id || '';
+          window.location.href = `/orders/${orderId}/confirmation`;
+        } else {
+          showNotification('Checkout failed. Please try again.', 'error');
+          btn.disabled = false;
+          btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Proceed to Checkout';
+        }
+      } catch {
+        showNotification('Network error.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = 'Proceed to Checkout';
+      }
+    };
+
+    window.loadCart = async function() {
+      document.getElementById('cart-skeleton').classList.remove('hidden');
+      document.getElementById('cart-content').classList.add('hidden');
+      document.getElementById('cart-empty').classList.add('hidden');
+      document.getElementById('cart-error').classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/v1/cart');
+        if (!res.ok) throw new Error('Failed');
+        const data = await res.json();
+        cartItems = data.items || data || [];
+
+        document.getElementById('cart-skeleton').classList.add('hidden');
+
+        if (cartItems.length === 0) {
+          document.getElementById('cart-empty').classList.remove('hidden');
+          return;
+        }
+
+        const list = document.getElementById('cart-items-list');
+        list.innerHTML = '';
+        cartItems.forEach(item => list.appendChild(renderCartItem(item)));
+        recalcTotal();
+        const cartContent = document.getElementById('cart-content');
+        cartContent.classList.remove('hidden');
+        cartContent.style.display = 'grid';
+        cartContent.style.gridTemplateColumns = 'repeat(1, minmax(0, 1fr))';
+        cartContent.className = 'grid grid-cols-1 lg:grid-cols-3 gap-8';
+      } catch {
+        document.getElementById('cart-skeleton').classList.add('hidden');
+        document.getElementById('cart-error').classList.remove('hidden');
+      }
+    };
+
+    checkAuth().then(() => loadCart());
+    initCsrfToken();
+    applyPersistedTheme();
+    applyPersistedContent();
+  </script>
+</body>
+</html>

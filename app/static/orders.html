@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="" />
+  <title>Order History — LUXE STORE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: { 400: '#D4AF37', 500: '#B8960C', 600: '#9A7D0A' },
+            navy: { 900: '#0A0E1A', 800: '#0F1629', 700: '#1A2340' },
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+        },
+      },
+    }
+  </script>
+  <style>
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+    body { background-color: #0A0E1A; color: #f1f5f9; }
+    .nav-link { position: relative; color: #cbd5e1; transition: color 0.2s; padding-bottom: 2px; }
+    .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background-color: #D4AF37; transition: width 0.2s; }
+    .nav-link:hover { color: #D4AF37; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link.active { color: #D4AF37; }
+    .nav-link.active::after { width: 100%; }
+    .btn-gold { background: linear-gradient(135deg, #D4AF37 0%, #B8960C 100%); color: #0A0E1A; font-weight: 600; transition: transform 0.2s, box-shadow 0.2s, filter 0.2s; min-height: 44px; }
+    .btn-gold:hover { transform: scale(1.03); box-shadow: 0 6px 20px rgba(212,175,55,0.35); filter: brightness(1.08); }
+    .btn-ghost { color: #94a3b8; background: transparent; border: 1.5px solid rgba(148,163,184,0.25); font-weight: 500; transition: color 0.2s, border-color 0.2s; min-height: 44px; }
+    .btn-ghost:hover { color: #D4AF37; border-color: #D4AF37; }
+    .status-badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: capitalize; }
+    .status-pending { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+    .status-completed { background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.3); }
+    .status-cancelled { background: rgba(248,113,113,0.15); color: #f87171; border: 1px solid rgba(248,113,113,0.3); }
+    .status-processing { background: rgba(96,165,250,0.15); color: #60a5fa; border: 1px solid rgba(96,165,250,0.3); }
+    .order-row { transition: background 0.2s; }
+    .order-row:hover { background: rgba(212,175,55,0.04); }
+    .mobile-menu { display: none; }
+    .mobile-menu.open { display: block; }
+    .skeleton { background: linear-gradient(90deg, #1A2340 25%, #243050 50%, #1A2340 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .animate-on-scroll { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body class="font-sans bg-navy-900 text-slate-100 min-h-screen">
+
+  <!-- Navbar -->
+  <header class="sticky top-0 z-40 bg-navy-900/95 backdrop-blur-md border-b border-gold-400/10">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
+      <div class="flex items-center justify-between h-16">
+        <a href="/" class="flex items-center gap-2 group min-h-[44px]" aria-label="LUXE STORE home">
+          <span class="text-gold-400 text-xl group-hover:scale-110 transition-transform duration-200" aria-hidden="true">◆</span>
+          <span class="text-lg font-bold tracking-widest text-white uppercase" data-content-key="brand_name">Luxe Store</span>
+        </a>
+        <div class="hidden sm:flex items-center gap-8">
+          <a href="/" class="nav-link text-sm font-medium min-h-[44px] flex items-center" data-content-key="nav_home_label">Home</a>
+          <a href="/#products" class="nav-link text-sm font-medium min-h-[44px] flex items-center" data-content-key="nav_products_label">Products</a>
+          <a href="/cart" class="nav-link text-sm font-medium min-h-[44px] flex items-center" data-content-key="nav_cart_label">Cart</a>
+          <a href="/orders" class="nav-link active text-sm font-medium min-h-[44px] flex items-center" data-content-key="nav_orders_label">Orders</a>
+        </div>
+        <div class="hidden sm:flex items-center gap-3">
+          <div id="user-menu-auth" class="hidden items-center gap-3">
+            <span id="user-email-display" class="text-sm text-gray-400 truncate max-w-[160px]"></span>
+            <button id="logout-btn" class="btn-ghost text-xs px-3 py-2 rounded-lg min-h-[44px]">Sign Out</button>
+          </div>
+          <a id="login-link" href="/login" class="btn-gold text-sm px-4 py-2 rounded-lg min-h-[44px] flex items-center" data-content-key="cta_sign_in">Sign In</a>
+        </div>
+        <button id="hamburger-btn" class="sm:hidden flex flex-col gap-1.5 p-2 min-w-[44px] min-h-[44px] items-center justify-center rounded-lg hover:bg-navy-700 transition-colors duration-200" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span class="block w-5 h-0.5 bg-gray-300"></span>
+          <span class="block w-5 h-0.5 bg-gray-300"></span>
+          <span class="block w-5 h-0.5 bg-gray-300"></span>
+        </button>
+      </div>
+      <div id="mobile-menu" class="mobile-menu sm:hidden border-t border-gold-400/10 py-4">
+        <div class="flex flex-col gap-1">
+          <a href="/" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center">Home</a>
+          <a href="/#products" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center">Products</a>
+          <a href="/cart" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center">Cart</a>
+          <a href="/orders" class="nav-link active text-sm font-medium px-2 py-3 min-h-[44px] flex items-center">Orders</a>
+          <div class="pt-2 border-t border-gold-400/10 mt-2">
+            <div id="mobile-user-auth" class="hidden flex-col gap-2">
+              <span id="mobile-user-email" class="text-sm text-gray-400 px-2"></span>
+              <button id="mobile-logout-btn" class="btn-ghost text-sm px-4 py-2 rounded-lg min-h-[44px] text-left">Sign Out</button>
+            </div>
+            <a id="mobile-login-link" href="/login" class="btn-gold text-sm px-4 py-2 rounded-lg min-h-[44px] flex items-center justify-center">Sign In</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Page header -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-4 animate-on-scroll">
+    <h1 class="text-3xl font-bold text-white">Order History</h1>
+    <p class="text-gray-400 mt-1 text-sm">Track and review your past purchases</p>
+  </div>
+
+  <!-- Main content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- Loading skeleton -->
+    <div id="orders-skeleton" class="space-y-3">
+      <div class="skeleton h-16 rounded-xl"></div>
+      <div class="skeleton h-16 rounded-xl"></div>
+      <div class="skeleton h-16 rounded-xl"></div>
+      <div class="skeleton h-16 rounded-xl"></div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="orders-empty" class="hidden text-center py-24 animate-on-scroll">
+      <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-navy-800 border border-gold-400/20 mb-6">
+        <svg class="w-10 h-10 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-3" data-content-key="empty_orders_message">No orders yet</h2>
+      <p class="text-gray-400 mb-8 max-w-sm mx-auto">You haven't placed any orders. Start shopping to see your order history here.</p>
+      <a href="/" class="btn-gold inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+        </svg>
+        Start Shopping
+      </a>
+    </div>
+
+    <!-- Orders table (desktop) / cards (mobile) -->
+    <div id="orders-content" class="hidden animate-on-scroll">
+
+      <!-- Desktop table -->
+      <div class="hidden sm:block bg-navy-800 rounded-2xl border border-gold-400/10 overflow-hidden">
+        <table class="w-full" aria-label="Order history">
+          <thead>
+            <tr class="border-b border-gold-400/10">
+              <th scope="col" class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wider px-6 py-4">Order ID</th>
+              <th scope="col" class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wider px-6 py-4">Date</th>
+              <th scope="col" class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wider px-6 py-4">Items</th>
+              <th scope="col" class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wider px-6 py-4">Total</th>
+              <th scope="col" class="text-left text-xs font-semibold text-gray-400 uppercase tracking-wider px-6 py-4">Status</th>
+            </tr>
+          </thead>
+          <tbody id="orders-table-body" class="divide-y divide-gold-400/5">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile cards -->
+      <div id="orders-cards" class="sm:hidden space-y-4">
+      </div>
+
+    </div>
+
+    <!-- Error state -->
+    <div id="orders-error" class="hidden text-center py-24">
+      <h2 class="text-xl font-semibold text-white mb-2">Failed to load orders</h2>
+      <p class="text-gray-400 mb-6">There was an error loading your order history.</p>
+      <button onclick="loadOrders()" class="btn-gold px-6 py-3 rounded-lg">Try Again</button>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-navy-800 border-t border-gold-400/10 mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-gray-600">
+      &copy; 2024 LUXE STORE. All rights reserved.
+    </div>
+  </footer>
+
+  <script type="module">
+    function getCsrfToken() {
+      return document.querySelector('meta[name="csrf-token"]')?.content || '';
+    }
+
+    async function initCsrfToken() {
+      try {
+        const res = await fetch('/api/v1/csrf-token');
+        if (res.ok) {
+          const data = await res.json();
+          const meta = document.querySelector('meta[name="csrf-token"]');
+          if (meta) meta.setAttribute('content', data.csrf_token);
+        }
+      } catch { /* ignore */ }
+    }
+
+    async function applyPersistedTheme() {
+      try {
+        const res = await fetch('/api/v1/theme');
+        if (!res.ok) return;
+        const t = await res.json();
+        const root = document.documentElement;
+        if (t.accent_color) root.style.setProperty('--accent-color', t.accent_color);
+        if (t.background_color) { root.style.setProperty('--bg-color', t.background_color); document.body.style.backgroundColor = t.background_color; }
+        if (t.font_family) { root.style.setProperty('--font-family', t.font_family); document.body.style.fontFamily = "'" + t.font_family + "', system-ui, sans-serif"; }
+      } catch { /* ignore */ }
+    }
+
+    async function applyPersistedContent() {
+      try {
+        const res = await fetch('/api/v1/content');
+        if (!res.ok) return;
+        const c = await res.json();
+        if (c.site_title) document.title = c.site_title;
+        document.querySelectorAll('[data-content-key]').forEach(el => {
+          const key = el.getAttribute('data-content-key');
+          if (key && c[key] !== undefined) el.textContent = c[key];
+        });
+      } catch { /* ignore */ }
+    }
+
+    function formatPrice(price) {
+      return '₱' + (parseFloat(price) || 0).toFixed(2);
+    }
+
+    function formatDate(dateStr) {
+      try {
+        return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+      } catch { return dateStr; }
+    }
+
+    function truncateId(id) {
+      if (!id) return '—';
+      return id.length > 12 ? id.substring(0, 8) + '…' : id;
+    }
+
+    function statusBadgeClass(status) {
+      const s = (status || '').toLowerCase();
+      if (s === 'completed' || s === 'delivered') return 'status-completed';
+      if (s === 'cancelled' || s === 'canceled') return 'status-cancelled';
+      if (s === 'processing' || s === 'shipped') return 'status-processing';
+      return 'status-pending';
+    }
+
+    // Auth
+    let currentUser = null;
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/v1/auth/me');
+        if (res.ok) {
+          currentUser = await res.json();
+          document.getElementById('user-menu-auth').classList.remove('hidden');
+          document.getElementById('user-menu-auth').classList.add('flex');
+          document.getElementById('user-email-display').textContent = currentUser.email || '';
+          document.getElementById('login-link').classList.add('hidden');
+          document.getElementById('mobile-user-auth').classList.remove('hidden');
+          document.getElementById('mobile-user-auth').classList.add('flex');
+          document.getElementById('mobile-user-email').textContent = currentUser.email || '';
+          document.getElementById('mobile-login-link').classList.add('hidden');
+        } else {
+          window.location.href = `/login?return_to=${encodeURIComponent(window.location.pathname)}`;
+        }
+      } catch {
+        window.location.href = `/login?return_to=${encodeURIComponent(window.location.pathname)}`;
+      }
+    }
+
+    async function logout() {
+      try {
+        await fetch('/api/v1/auth/logout', { method: 'POST', headers: { 'X-CSRF-Token': getCsrfToken() } });
+      } finally { window.location.href = '/login'; }
+    }
+    document.getElementById('logout-btn').addEventListener('click', logout);
+    document.getElementById('mobile-logout-btn').addEventListener('click', logout);
+
+    // Hamburger
+    document.getElementById('hamburger-btn').addEventListener('click', () => {
+      const menu = document.getElementById('mobile-menu');
+      const btn = document.getElementById('hamburger-btn');
+      const isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(!isOpen));
+    });
+
+    window.loadOrders = async function() {
+      document.getElementById('orders-skeleton').classList.remove('hidden');
+      document.getElementById('orders-content').classList.add('hidden');
+      document.getElementById('orders-empty').classList.add('hidden');
+      document.getElementById('orders-error').classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/v1/orders');
+        if (!res.ok) throw new Error('Failed');
+        const data = await res.json();
+        const orders = data.orders || data || [];
+
+        document.getElementById('orders-skeleton').classList.add('hidden');
+
+        if (orders.length === 0) {
+          document.getElementById('orders-empty').classList.remove('hidden');
+          triggerVisible(document.getElementById('orders-empty'));
+          return;
+        }
+
+        // Desktop table rows
+        const tbody = document.getElementById('orders-table-body');
+        tbody.innerHTML = '';
+        orders.forEach(order => {
+          const tr = document.createElement('tr');
+          tr.className = 'order-row';
+          const itemCount = order.items?.length ?? order.item_count ?? '—';
+          tr.innerHTML = `
+            <td class="px-6 py-4">
+              <span class="font-mono text-sm text-gray-300" title="${order.id}">${truncateId(order.id)}</span>
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-300">${formatDate(order.created_at)}</td>
+            <td class="px-6 py-4 text-sm text-gray-300">${itemCount} item${itemCount !== 1 ? 's' : ''}</td>
+            <td class="px-6 py-4 text-sm font-semibold text-gold-400">${formatPrice(order.total_amount)}</td>
+            <td class="px-6 py-4">
+              <span class="status-badge ${statusBadgeClass(order.status)}">${order.status || 'pending'}</span>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+
+        // Mobile cards
+        const cardsContainer = document.getElementById('orders-cards');
+        cardsContainer.innerHTML = '';
+        orders.forEach(order => {
+          const itemCount = order.items?.length ?? order.item_count ?? '—';
+          const card = document.createElement('div');
+          card.className = 'bg-navy-800 rounded-2xl border border-gold-400/10 p-4';
+          card.innerHTML = `
+            <div class="flex items-start justify-between mb-3">
+              <div>
+                <p class="text-xs text-gray-500 mb-0.5">Order ID</p>
+                <p class="font-mono text-sm text-gray-300" title="${order.id}">${truncateId(order.id)}</p>
+              </div>
+              <span class="status-badge ${statusBadgeClass(order.status)}">${order.status || 'pending'}</span>
+            </div>
+            <div class="grid grid-cols-3 gap-3 text-sm">
+              <div>
+                <p class="text-xs text-gray-500 mb-0.5">Date</p>
+                <p class="text-gray-300">${formatDate(order.created_at)}</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500 mb-0.5">Items</p>
+                <p class="text-gray-300">${itemCount}</p>
+              </div>
+              <div>
+                <p class="text-xs text-gray-500 mb-0.5">Total</p>
+                <p class="text-gold-400 font-semibold">${formatPrice(order.total_amount)}</p>
+              </div>
+            </div>`;
+          cardsContainer.appendChild(card);
+        });
+
+        document.getElementById('orders-content').classList.remove('hidden');
+        triggerVisible(document.getElementById('orders-content'));
+        observeAnimations();
+      } catch {
+        document.getElementById('orders-skeleton').classList.add('hidden');
+        document.getElementById('orders-error').classList.remove('hidden');
+      }
+    };
+
+    function triggerVisible(el) {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        el.classList.add('visible');
+        return;
+      }
+      requestAnimationFrame(() => el.classList.add('visible'));
+    }
+
+    function observeAnimations() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.querySelectorAll('.animate-on-scroll').forEach(el => el.classList.add('visible'));
+        return;
+      }
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); }
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    }
+
+    checkAuth().then(() => loadOrders());
+    initCsrfToken();
+    applyPersistedTheme();
+    applyPersistedContent();
+    observeAnimations();
+  </script>
+</body>
+</html>

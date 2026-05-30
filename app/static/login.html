@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="csrf-token" content="" />
+  <title>Sign In — LUXE STORE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: { 400: '#D4AF37', 500: '#B8960C', 600: '#9A7D0A' },
+            navy: { 900: '#0A0E1A', 800: '#0F1629', 700: '#1A2340' },
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          animation: {
+            'slide-down': 'slideDown 0.3s ease-out',
+            'fade-in': 'fadeIn 0.5s ease-out',
+            'slide-up': 'slideUp 0.6s ease-out',
+          },
+          keyframes: {
+            slideDown: { '0%': { transform: 'translateY(-10px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+            fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+            slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    .nav-link {
+      position: relative;
+      transition: color 0.2s;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #D4AF37;
+      transition: width 0.2s;
+    }
+    .nav-link:hover::after { width: 100%; }
+    .input-field {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(212,175,55,0.25);
+      color: #f1f5f9;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-field::placeholder { color: rgba(148,163,184,0.7); }
+    .input-field:focus {
+      outline: none;
+      border-color: #D4AF37;
+      box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, #D4AF37 0%, #B8960C 100%);
+      color: #0A0E1A;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+    }
+    .btn-gold:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 24px rgba(212,175,55,0.35);
+      filter: brightness(1.08);
+    }
+    .btn-gold:active { transform: scale(0.97); }
+    .glass-card {
+      background: rgba(10,14,26,0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(212,175,55,0.18);
+    }
+  </style>
+</head>
+<body class="font-sans min-h-screen flex items-center justify-center relative overflow-hidden">
+
+  <!-- Full-viewport background image — solar-powered electronic appliances -->
+  <div
+    class="absolute inset-0 bg-cover bg-center bg-no-repeat"
+    style="background-image: url('https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1920&q=80');"
+    role="img"
+    aria-label="Solar panels and renewable energy technology background"
+  ></div>
+  <!-- Dark gradient overlay -->
+  <div class="absolute inset-0 bg-gradient-to-br from-navy-900/92 via-navy-800/82 to-navy-900/92"></div>
+
+  <!-- Notification area -->
+  <div id="notification-area" class="fixed top-4 right-4 z-50 flex flex-col gap-2" aria-live="polite"></div>
+
+  <!-- Login card -->
+  <main class="relative z-10 w-full max-w-md mx-4 animate-fade-in" role="main">
+    <div class="glass-card rounded-2xl p-8 sm:p-10 shadow-2xl">
+
+      <!-- Brand -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center gap-2 mb-3">
+          <span class="text-3xl" aria-hidden="true" style="animation: zap 0.8s ease-in-out infinite alternate; display:inline-block;">⚡</span>
+          <span class="text-2xl uppercase" data-content-key="brand_name" style="font-family:'Bangers',cursive; letter-spacing:0.1em; color:#FAFF00; text-shadow: 2px 2px 0 #FF6B35, 0 0 20px rgba(250,255,0,0.5);">Kuryentipid</span>
+          <span class="text-3xl" aria-hidden="true" style="animation: zap 0.8s ease-in-out infinite alternate 0.4s; display:inline-block;">⚡</span>
+        </div>
+        <p class="text-sm tracking-wide font-bold" style="color:rgba(250,255,0,0.7);">Solar-Powered Savings Awaits! 🌞</p>
+      </div>
+
+      <!-- Tab switcher -->
+      <div class="flex rounded-lg overflow-hidden border border-gold-400/20 mb-8" role="tablist">
+        <button
+          id="tab-login"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panel-login"
+          class="flex-1 py-2.5 text-sm font-semibold transition-all duration-200 bg-gold-400/15 text-gold-400 border-b-2 border-gold-400 min-h-[44px]"
+          onclick="switchTab('login')"
+        >Sign In</button>
+        <button
+          id="tab-register"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-register"
+          class="flex-1 py-2.5 text-sm font-semibold transition-all duration-200 text-gray-400 hover:text-gray-200 min-h-[44px]"
+          onclick="switchTab('register')"
+        >Create Account</button>
+      </div>
+
+      <!-- Login form -->
+      <div id="panel-login" role="tabpanel" aria-labelledby="tab-login">
+        <form id="login-form" novalidate>
+          <div class="space-y-5">
+            <div>
+              <label for="login-email" class="block text-sm font-medium text-gray-300 mb-1.5">Email or username</label>
+              <input
+                type="text"
+                id="login-email"
+                name="email"
+                autocomplete="username"
+                required
+                placeholder="you@example.com"
+                class="input-field w-full rounded-lg px-4 py-3 text-sm min-h-[44px]"
+                aria-required="true"
+              />
+            </div>
+            <div>
+              <label for="login-password" class="block text-sm font-medium text-gray-300 mb-1.5">Password</label>
+              <div class="relative">
+                <input
+                  type="password"
+                  id="login-password"
+                  name="password"
+                  autocomplete="current-password"
+                  required
+                  placeholder="••••••••"
+                  class="input-field w-full rounded-lg px-4 py-3 pr-12 text-sm min-h-[44px]"
+                  aria-required="true"
+                />
+                <button
+                  type="button"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gold-400 transition-colors duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  onclick="togglePassword('login-password', this)"
+                  aria-label="Toggle password visibility"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Remember me -->
+            <div class="flex items-center gap-2">
+              <input type="checkbox" id="remember-me" class="w-4 h-4 rounded cursor-pointer" style="accent-color:#FAFF00;" />
+              <label for="remember-me" class="text-sm font-semibold cursor-pointer" style="color:rgba(250,255,0,0.8);">🔋 Remember me</label>
+            </div>
+
+            <!-- Error message -->
+            <div id="login-error" class="hidden rounded-lg bg-red-900/40 border border-red-500/40 px-4 py-3 text-sm text-red-300" role="alert" aria-live="assertive"></div>
+
+            <button
+              type="submit"
+              class="btn-gold w-full rounded-lg px-6 py-3 text-sm min-h-[44px] flex items-center justify-center gap-2"
+              style="font-family:'Bangers',cursive; font-size:1.1rem; letter-spacing:0.05em;"
+            >
+              <span id="login-btn-text">⚡ Mag-Sign In!</span>
+              <svg id="login-spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+              </svg>
+            </button>
+          </div>
+        </form>
+
+        <p class="mt-6 text-center text-sm text-gray-400">
+          Don't have an account?
+          <button onclick="switchTab('register')" class="text-gold-400 hover:text-gold-500 font-medium transition-colors duration-200 underline-offset-2 hover:underline min-h-[44px] inline-flex items-center">
+            Create one
+          </button>
+        </p>
+      </div>
+
+      <!-- Register form -->
+      <div id="panel-register" role="tabpanel" aria-labelledby="tab-register" class="hidden">
+        <form id="register-form" novalidate>
+          <div class="space-y-5">
+            <div>
+              <label for="reg-email" class="block text-sm font-medium text-gray-300 mb-1.5">Email address</label>
+              <input
+                type="email"
+                id="reg-email"
+                name="email"
+                autocomplete="email"
+                required
+                placeholder="you@example.com"
+                class="input-field w-full rounded-lg px-4 py-3 text-sm min-h-[44px]"
+                aria-required="true"
+              />
+            </div>
+            <div>
+              <label for="reg-password" class="block text-sm font-medium text-gray-300 mb-1.5">Password</label>
+              <div class="relative">
+                <input
+                  type="password"
+                  id="reg-password"
+                  name="password"
+                  autocomplete="new-password"
+                  required
+                  minlength="8"
+                  placeholder="At least 8 characters"
+                  class="input-field w-full rounded-lg px-4 py-3 pr-12 text-sm min-h-[44px]"
+                  aria-required="true"
+                  aria-describedby="password-hint"
+                />
+                <button
+                  type="button"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gold-400 transition-colors duration-200 min-w-[44px] min-h-[44px] flex items-center justify-center"
+                  onclick="togglePassword('reg-password', this)"
+                  aria-label="Toggle password visibility"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                </button>
+              </div>
+              <p id="password-hint" class="mt-1.5 text-xs text-gray-500">Minimum 8 characters required</p>
+            </div>
+
+            <!-- Error message -->
+            <div id="register-error" class="hidden rounded-lg bg-red-900/40 border border-red-500/40 px-4 py-3 text-sm text-red-300" role="alert" aria-live="assertive"></div>
+
+            <button
+              type="submit"
+              class="btn-gold w-full rounded-lg px-6 py-3 text-sm min-h-[44px] flex items-center justify-center gap-2"
+            >
+              <span id="register-btn-text">Create Account</span>
+              <svg id="register-spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+              </svg>
+            </button>
+          </div>
+        </form>
+
+        <p class="mt-6 text-center text-sm text-gray-400">
+          Already have an account?
+          <button onclick="switchTab('login')" class="text-gold-400 hover:text-gold-500 font-medium transition-colors duration-200 underline-offset-2 hover:underline min-h-[44px] inline-flex items-center">
+            Sign in
+          </button>
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Footer note -->
+    <p class="text-center text-xs text-gray-600 mt-6">
+      &copy; 2024 LUXE STORE. All rights reserved.
+    </p>
+  </main>
+
+  <script type="module">
+    // Tab switching
+    window.switchTab = function(tab) {
+      const loginPanel = document.getElementById('panel-login');
+      const registerPanel = document.getElementById('panel-register');
+      const loginTab = document.getElementById('tab-login');
+      const registerTab = document.getElementById('tab-register');
+
+      if (tab === 'login') {
+        loginPanel.classList.remove('hidden');
+        registerPanel.classList.add('hidden');
+        loginTab.setAttribute('aria-selected', 'true');
+        loginTab.classList.add('bg-gold-400/15', 'text-gold-400', 'border-b-2', 'border-gold-400');
+        loginTab.classList.remove('text-gray-400');
+        registerTab.setAttribute('aria-selected', 'false');
+        registerTab.classList.remove('bg-gold-400/15', 'text-gold-400', 'border-b-2', 'border-gold-400');
+        registerTab.classList.add('text-gray-400');
+      } else {
+        registerPanel.classList.remove('hidden');
+        loginPanel.classList.add('hidden');
+        registerTab.setAttribute('aria-selected', 'true');
+        registerTab.classList.add('bg-gold-400/15', 'text-gold-400', 'border-b-2', 'border-gold-400');
+        registerTab.classList.remove('text-gray-400');
+        loginTab.setAttribute('aria-selected', 'false');
+        loginTab.classList.remove('bg-gold-400/15', 'text-gold-400', 'border-b-2', 'border-gold-400');
+        loginTab.classList.add('text-gray-400');
+      }
+    };
+
+    // Toggle password visibility
+    window.togglePassword = function(inputId, btn) {
+      const input = document.getElementById(inputId);
+      input.type = input.type === 'password' ? 'text' : 'password';
+      btn.setAttribute('aria-label', input.type === 'password' ? 'Show password' : 'Hide password');
+    };
+
+    // CSRF token helper
+    function getCsrfToken() {
+      return document.querySelector('meta[name="csrf-token"]')?.content || '';
+    }
+
+    // Show/hide loading state
+    function setLoading(formId, loading) {
+      const prefix = formId === 'login-form' ? 'login' : 'register';
+      document.getElementById(`${prefix}-btn-text`).textContent = loading
+        ? (prefix === 'login' ? 'Signing in…' : 'Creating account…')
+        : (prefix === 'login' ? 'Sign In' : 'Create Account');
+      document.getElementById(`${prefix}-spinner`).classList.toggle('hidden', !loading);
+    }
+
+    // Show error
+    function showError(errorId, message) {
+      const el = document.getElementById(errorId);
+      el.textContent = message;
+      el.classList.remove('hidden');
+    }
+
+    function hideError(errorId) {
+      document.getElementById(errorId).classList.add('hidden');
+    }
+
+    // Login form
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideError('login-error');
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      if (!email) { showError('login-error', 'Please enter your email or username.'); return; }
+      if (!password) { showError('login-error', 'Please enter your password.'); return; }
+
+      setLoading('login-form', true);
+      try {
+        const res = await fetch('/api/v1/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': getCsrfToken(),
+          },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          const returnTo = new URLSearchParams(window.location.search).get('return_to') || '/';
+          window.location.href = returnTo;
+        } else {
+          showError('login-error', data?.error?.message || 'Invalid credentials. Please try again.');
+        }
+      } catch {
+        showError('login-error', 'Network error. Please check your connection and try again.');
+      } finally {
+        setLoading('login-form', false);
+      }
+    });
+
+    // Register form
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideError('register-error');
+      const email = document.getElementById('reg-email').value.trim();
+      const password = document.getElementById('reg-password').value;
+
+      if (!email) { showError('register-error', 'Please enter a valid email address.'); return; }
+      if (password.length < 8) { showError('register-error', 'Password must be at least 8 characters.'); return; }
+
+      setLoading('register-form', true);
+      try {
+        const res = await fetch('/api/v1/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': getCsrfToken(),
+          },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (res.ok || res.status === 201) {
+          switchTab('login');
+          // Show success notification
+          const area = document.getElementById('notification-area');
+          const note = document.createElement('div');
+          note.className = 'bg-green-900/80 border border-green-500/40 text-green-300 px-4 py-3 rounded-lg text-sm shadow-lg animate-slide-down';
+          note.textContent = 'Account created! Please sign in.';
+          area.appendChild(note);
+          setTimeout(() => { note.style.opacity = '0'; note.style.transition = 'opacity 0.5s'; setTimeout(() => note.remove(), 500); }, 3000);
+        } else {
+          showError('register-error', data?.error?.message || 'Registration failed. Please try again.');
+        }
+      } catch {
+        showError('register-error', 'Network error. Please check your connection and try again.');
+      } finally {
+        setLoading('register-form', false);
+      }
+    });
+
+    // Fetch CSRF token on load
+    (async () => {
+      try {
+        const res = await fetch('/api/v1/auth/me');
+        if (res.ok) {
+          // Already logged in — redirect
+          window.location.href = '/';
+        }
+      } catch { /* not logged in, stay on page */ }
+    })();
+
+    // Apply persisted theme and content
+    (async () => {
+      try {
+        const [tr, cr] = await Promise.all([fetch('/api/v1/theme'), fetch('/api/v1/content')]);
+        if (tr.ok) {
+          const t = await tr.json();
+          const root = document.documentElement;
+          if (t.accent_color) root.style.setProperty('--accent-color', t.accent_color);
+          if (t.background_color) { root.style.setProperty('--bg-color', t.background_color); document.body.style.backgroundColor = t.background_color; }
+          if (t.font_family) { root.style.setProperty('--font-family', t.font_family); document.body.style.fontFamily = "'" + t.font_family + "', system-ui, sans-serif"; }
+        }
+        if (cr.ok) {
+          const c = await cr.json();
+          if (c.site_title) document.title = c.site_title;
+          document.querySelectorAll('[data-content-key]').forEach(el => {
+            const key = el.getAttribute('data-content-key');
+            if (key && c[key] !== undefined) el.textContent = c[key];
+          });
+        }
+      } catch { /* ignore */ }
+    })();
+
+    // Fetch CSRF token
+    (async () => {
+      try {
+        const res = await fetch('/api/v1/csrf-token');
+        if (res.ok) {
+          const data = await res.json();
+          const meta = document.querySelector('meta[name="csrf-token"]');
+          if (meta) meta.setAttribute('content', data.csrf_token);
+        }
+      } catch { /* ignore */ }
+    })();
+  </script>
+</body>
+</html>
