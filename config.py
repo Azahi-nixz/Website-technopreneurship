@@ -19,7 +19,11 @@ class BaseConfig:
     TESTING: bool = False
 
     # Flask-Session
+    # On Vercel (and other serverless platforms) the only writable directory
+    # is /tmp.  We default to filesystem sessions stored there so the app
+    # works out-of-the-box without any extra infrastructure.
     SESSION_TYPE: str = os.environ.get("SESSION_TYPE", "filesystem")
+    SESSION_FILE_DIR: str = os.environ.get("SESSION_FILE_DIR", "/tmp/flask_session")
     SESSION_PERMANENT: bool = False
     SESSION_USE_SIGNER: bool = True
 

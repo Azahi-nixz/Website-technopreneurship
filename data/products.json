@@ -1,0 +1,242 @@
+[
+  {
+    "id": "a1000001-0000-0000-0000-000000000001",
+    "name": "Kafka — Stellaron Hunter Solar Inverter",
+    "description": "Channel the power of the Stellaron with this ultra-efficient 5kW solar inverter. Kafka's signature purple lightning aesthetic meets cutting-edge MPPT technology. Whisper-quiet, deadly efficient. Perfect for those who prefer their energy dark and mysterious. Includes smart monitoring app with 'Nihility Path' dark mode.",
+    "price": "499.00",
+    "compare_at_price": "699.00",
+    "tier": "base",
+    "is_active": true,
+    "created_at": "2026-05-01T10:00:00+00:00",
+    "images": [
+      {
+        "id": "img-a1000001-01",
+        "product_id": "a1000001-0000-0000-0000-000000000001",
+        "image_url": "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&q=80",
+        "display_order": 0
+      },
+      {
+        "id": "img-a1000001-02",
+        "product_id": "a1000001-0000-0000-0000-000000000001",
+        "image_url": "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=600&q=80",
+        "display_order": 1
+      }
+    ]
+  },
+  {
+    "id": "a1000002-0000-0000-0000-000000000002",
+    "name": "Bronya — Supreme Guardian Solar Panel Set",
+    "description": "Tactical precision meets renewable energy! This 400W monocrystalline panel set is engineered with Bronya's signature military-grade durability. Anti-reflective coating, hail-resistant tempered glass, and a 25-year performance warranty. Deploy it on your roof like a strategic asset. The Silvermane Guard approves.",
+    "price": "499.00",
+    "compare_at_price": "699.00",
+    "tier": "base",
+    "is_active": true,
+    "created_at": "2026-05-01T10:05:00+00:00",
+    "images": [
+      {
+        "id": "img-a1000002-01",
+        "product_id": "a1000002-0000-0000-0000-000000000002",
+        "image_url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+        "display_order": 0
+      },
+      {
+        "id": "img-a1000002-02",
+        "product_id": "a1000002-0000-0000-0000-000000000002",
+        "image_url": "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=600&q=80",
+        "display_order": 1
+      }
+    ]
+  },
+  {
+    "id": "a1000003-0000-0000-0000-000000000003",
+    "name": "Seele — Butterfly Dream Solar Battery",
+    "description": "Reborn with every charge cycle! This 10kWh lithium iron phosphate home battery stores your solar energy with Seele's butterfly-wing efficiency. 6000+ cycle lifespan, 95% round-trip efficiency, and a sleek white chassis that looks like it came straight from Cocolia's lab. Your energy never truly dies.",
+    "price": "999.00",
+    "compare_at_price": "1299.00",
+    "tier": "flagship",
+    "is_active": true,
+    "created_at": "2026-05-01T10:10:00+00:00",
+    "images": [
+      {
+        "id": "img-a1000003-01",
+        "product_id": "a1000003-0000-0000-0000-000000000003",
+        "image_url": "https://images.unsplash.com/photo-1620714223084-8fcacc2dbe4d?w=600&q=80",
+        "display_order": 0
+      },
+      {
+        "id": "img-a1000003-02",
+        "product_id": "a1000003-0000-0000-0000-000000000003",
+        "image_url": "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=600&q=80",
+        "display_order": 1
+      }
+    ]
+  },
+  {
+    "id": "a1000004-0000-0000-0000-000000000004",
+    "name": "Himeko — Astral Express Solar Charge Controller",
+    "description": "Ride the rails of renewable energy! Himeko's signature red-and-gold MPPT charge controller manages up to 60A with the precision of an Express crew member navigating the cosmos. Wide voltage input range, LCD display, and temperature compensation. The Express runs on solar now, and so can you.",
+    "price": "999.00",
+    "compare_at_price": "1299.00",
+    "tier": "flagship",
+    "is_active": true,
+    "created_at": "2026-05-01T10:15:00+00:00",
+    "images": [
+      {
+        "id": "img-a1000004-01",
+        "product_id": "a1000004-0000-0000-0000-000000000004",
+        "image_url": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&q=80",
+        "display_order": 0
+      },
+      {
+        "id": "img-a1000004-02",
+        "product_id": "a1000004-0000-0000-0000-000000000004",
+        "image_url": "https://images.unsplash.com/photo-1548337138-e87d889cc369?w=600&q=80",
+        "display_order": 1
+      }
+    ]
+  },
+  {
+    "id": "a1000005-0000-0000-0000-000000000005",
+    "name": "Pela — Erudition Path Smart Energy Monitor",
+    "description": "Knowledge is power — literally! Pela's Erudition-inspired smart energy monitor tracks every watt with scholarly precision. Real-time consumption graphs, AI-powered usage predictions, and a cute penguin-themed UI. Connects to your solar system and tells you exactly where your energy is going. Debuff your electricity bill!",
+    "price": "499.00",
+    "compare_at_price": "699.00",
+    "tier": "base",
+    "is_active": true,
+    "created_at": "2026-05-01T10:20:00+00:00",
+    "images": [
+      {
+        "id": "img-a1000005-01",
+        "product_id": "a1000005-0000-0000-0000-000000000005",
+        "image_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80",
+        "display_order": 0
+      },
+      {
+        "id": "img-a1000005-02",
+        "product_id": "a1000005-0000-0000-0000-000000000005",
+        "image_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=80",
+        "display_order": 1
+      }
+    ]
+  },
+  {
+    "id": "a1000006-0000-0000-0000-000000000006",
+    "name": "Asta — Trailblaze Speed Solar Fan System",
+    "description": "Speed up your savings! Asta's Trailblaze-powered solar fan system keeps your home cool without burning through your wallet. 5-blade DC brushless motor, 6 speed settings, and a built-in solar panel that charges a backup battery. Runs 12 hours on a full charge. Asta would definitely approve of this efficiency buff.",
+    "price": "999.00",
+    "compare_at_price": "1299.00",
+    "tier": "flagship",
+    "is_active": true,
+    "created_at": "2026-05-01T10:25:00+00:00",
+    "images": [
+      {
+        "id": "img-a1000006-01",
+        "product_id": "a1000006-0000-0000-0000-000000000006",
+        "image_url": "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&q=80",
+        "display_order": 0
+      },
+      {
+        "id": "img-a1000006-02",
+        "product_id": "a1000006-0000-0000-0000-000000000006",
+        "image_url": "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=600&q=80",
+        "display_order": 1
+      }
+    ]
+  },
+  {
+    "id": "a1000007-0000-0000-0000-000000000007",
+    "name": "Fu Xuan — All-Seeing Solar Street Light",
+    "description": "The Matrix of Prescience illuminates your path! Fu Xuan's all-seeing solar street light uses predictive light sensors to activate before you even need it. 200W LED, 8-hour runtime, IP65 waterproof, and a motion sensor that detects threats from 10 meters. Your neighborhood's safety is now written in the stars.",
+    "price": "1499.00",
+    "compare_at_price": "1999.00",
+    "tier": "pro",
+    "is_active": true,
+    "created_at": "2026-05-01T10:30:00+00:00",
+    "images": [
+      {
+        "id": "img-a1000007-01",
+        "product_id": "a1000007-0000-0000-0000-000000000007",
+        "image_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80",
+        "display_order": 0
+      },
+      {
+        "id": "img-a1000007-02",
+        "product_id": "a1000007-0000-0000-0000-000000000007",
+        "image_url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+        "display_order": 1
+      }
+    ]
+  },
+  {
+    "id": "a1000008-0000-0000-0000-000000000008",
+    "name": "Luocha — Abundance Path Solar Water Heater",
+    "description": "Heal your hot water bills! Luocha's Abundance-blessed solar water heater provides endless hot water using the power of the sun. 200L capacity, evacuated tube collector, frost protection down to -30°C, and a backup electric element for cloudy days. Your family's comfort is restored — no Imaginary energy required.",
+    "price": "1499.00",
+    "compare_at_price": "1999.00",
+    "tier": "pro",
+    "is_active": true,
+    "created_at": "2026-05-01T10:35:00+00:00",
+    "images": [
+      {
+        "id": "img-a1000008-01",
+        "product_id": "a1000008-0000-0000-0000-000000000008",
+        "image_url": "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=600&q=80",
+        "display_order": 0
+      },
+      {
+        "id": "img-a1000008-02",
+        "product_id": "a1000008-0000-0000-0000-000000000008",
+        "image_url": "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=600&q=80",
+        "display_order": 1
+      }
+    ]
+  },
+  {
+    "id": "a1000009-0000-0000-0000-000000000009",
+    "name": "Tingyun — Harmony Boost Solar Power Bank",
+    "description": "Share the energy, share the harmony! Tingyun's 40,000mAh solar power bank charges 4 devices simultaneously with her signature Harmony buff. Built-in solar panel for emergency top-ups, USB-C PD 65W fast charging, and a glowing indicator that pulses like a Foxian blessing. Never let your allies run out of power again!",
+    "price": "499.00",
+    "compare_at_price": "699.00",
+    "tier": "base",
+    "is_active": true,
+    "created_at": "2026-05-01T10:40:00+00:00",
+    "images": [
+      {
+        "id": "img-a1000009-01",
+        "product_id": "a1000009-0000-0000-0000-000000000009",
+        "image_url": "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=600&q=80",
+        "display_order": 0
+      },
+      {
+        "id": "img-a1000009-02",
+        "product_id": "a1000009-0000-0000-0000-000000000009",
+        "image_url": "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&q=80",
+        "display_order": 1
+      }
+    ]
+  },
+  {
+    "id": "a1000010-0000-0000-0000-000000000010",
+    "name": "Guinaifen — Firekiss Solar LED Strip Kit",
+    "description": "Set your home ablaze with color — sustainably! Guinaifen's Firekiss-inspired solar LED strip kit brings the circus to your living space. 10 meters of RGB+W LEDs, solar-charged battery pack, app-controlled with 16 million colors, and a 'Firekiss' mode that pulses in flame patterns. Your electricity bill won't feel a thing. DoT not included.",
+    "price": "999.00",
+    "compare_at_price": "1299.00",
+    "tier": "flagship",
+    "is_active": true,
+    "created_at": "2026-05-01T10:45:00+00:00",
+    "images": [
+      {
+        "id": "img-a1000010-01",
+        "product_id": "a1000010-0000-0000-0000-000000000010",
+        "image_url": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+        "display_order": 0
+      },
+      {
+        "id": "img-a1000010-02",
+        "product_id": "a1000010-0000-0000-0000-000000000010",
+        "image_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80",
+        "display_order": 1
+      }
+    ]
+  }
+]

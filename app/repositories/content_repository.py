@@ -11,23 +11,23 @@ from app.models.content import ContentConfig
 _COL = "content"
 
 _DEFAULTS = {
-    "site_title": "LUXE STORE",
-    "brand_name": "Luxe Store",
-    "hero_headline": "Discover Luxury Redefined",
-    "hero_subheadline": "Curated premium products crafted for those who appreciate the finest things in life.",
+    "site_title": "Kuryentipid ⚡ — Sun in. Power out. Comfort always.",
+    "brand_name": "Kuryentipid",
+    "hero_headline": "Sun in. Power out. Comfort always. ⚡",
+    "hero_subheadline": "Solar-powered appliances and gadgets built for real life. Save on bills, save the planet — without sacrificing comfort.",
     "nav_home_label": "Home",
     "nav_products_label": "Products",
     "nav_cart_label": "Cart",
     "nav_orders_label": "Orders",
-    "footer_tagline": "Premium products for discerning customers. Quality and elegance in every item.",
-    "footer_copyright": "© 2024 LUXE STORE. All rights reserved.",
-    "section_heading": "Our Collection",
-    "section_subheading": "Handpicked premium items",
-    "cta_shop_now": "Shop Now",
+    "footer_tagline": "Sun in. Power out. Comfort always. — Kuryentipid brings solar energy to every home.",
+    "footer_copyright": "© 2024 Kuryentipid. All rights reserved.",
+    "section_heading": "⚡ Our Solar Collection",
+    "section_subheading": "Sun in. Power out. Comfort always.",
+    "cta_shop_now": "Shop Now ⚡",
     "cta_view_cart": "View Cart",
     "cta_sign_in": "Sign In",
-    "empty_cart_message": "Your cart is empty.",
-    "empty_orders_message": "No orders yet.",
+    "empty_cart_message": "Your cart is empty — time to harness the sun! 🌞",
+    "empty_orders_message": "No orders yet. Start your solar journey today! ✨",
 }
 
 # All fields that must not be empty

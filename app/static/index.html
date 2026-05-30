@@ -4,29 +4,49 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="csrf-token" content="" />
-  <title data-content-key="site_title">LUXE STORE — Premium Products</title>
+  <title data-content-key="site_title">Kuryentipid ⚡ — Solar Powered Savings!</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            gold: { 400: '#D4AF37', 500: '#B8960C', 600: '#9A7D0A' },
-            navy: { 900: '#0A0E1A', 800: '#0F1629', 700: '#1A2340' },
+            volt:  { 400: '#FAFF00', 500: '#E6EB00', 600: '#C8CC00' },
+            solar: { 400: '#FF6B35', 500: '#E55A25', 600: '#C44A18' },
+            deep:  { 900: '#0D0A1A', 800: '#130F2A', 700: '#1E1840' },
+            neon:  { cyan: '#00F5FF', pink: '#FF2D78', purple: '#BF5FFF' },
+            gold:  { 400: '#FAFF00', 500: '#E6EB00', 600: '#C8CC00' },
+            navy:  { 900: '#0D0A1A', 800: '#130F2A', 700: '#1E1840' },
           },
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          fontFamily: {
+            sans:  ['Nunito', 'system-ui', 'sans-serif'],
+            manga: ['Bangers', 'cursive'],
+            tech:  ['Orbitron', 'monospace'],
+          },
           animation: {
-            'slide-down': 'slideDown 0.3s ease-out',
-            'fade-in': 'fadeIn 0.5s ease-out',
-            'slide-up': 'slideUp 0.6s ease-out',
+            'slide-down':    'slideDown 0.35s cubic-bezier(0.34,1.56,0.64,1)',
+            'slide-up':      'slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1)',
+            'fade-in':       'fadeIn 0.5s ease-out',
+            'bounce-in':     'bounceIn 0.6s cubic-bezier(0.34,1.56,0.64,1)',
+            'zap':           'zap 0.8s ease-in-out infinite alternate',
+            'float':         'float 3s ease-in-out infinite',
+            'pulse-glow':    'pulseGlow 2s ease-in-out infinite',
+            'shimmer':       'shimmer 1.5s infinite',
+            'pop':           'pop 0.3s cubic-bezier(0.34,1.56,0.64,1)',
           },
           keyframes: {
-            slideDown: { '0%': { transform: 'translateY(-10px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
-            fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-            slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+            slideDown:   { '0%': { transform: 'translateY(-16px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+            slideUp:     { '0%': { transform: 'translateY(24px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+            fadeIn:      { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+            bounceIn:    { '0%': { transform: 'scale(0.5)', opacity: '0' }, '70%': { transform: 'scale(1.08)' }, '100%': { transform: 'scale(1)', opacity: '1' } },
+            zap:         { '0%': { textShadow: '0 0 8px #FAFF00, 0 0 20px #FAFF00' }, '100%': { textShadow: '0 0 16px #FF6B35, 0 0 40px #FF6B35' } },
+            float:       { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+            pulseGlow:   { '0%,100%': { boxShadow: '0 0 8px rgba(250,255,0,0.4)' }, '50%': { boxShadow: '0 0 24px rgba(250,255,0,0.8), 0 0 48px rgba(255,107,53,0.4)' } },
+            shimmer:     { '0%': { backgroundPosition: '200% 0' }, '100%': { backgroundPosition: '-200% 0' } },
+            pop:         { '0%': { transform: 'scale(0.8)' }, '60%': { transform: 'scale(1.15)' }, '100%': { transform: 'scale(1)' } },
           },
         },
       },
@@ -34,174 +54,76 @@
   </script>
   <style>
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
     }
-    body { background-color: #0A0E1A; color: #f1f5f9; }
-    .nav-link {
-      position: relative;
-      color: #cbd5e1;
-      transition: color 0.2s;
-      padding-bottom: 2px;
+    body { background-color: #0D0A1A; color: #f1f5f9; font-family: 'Nunito', system-ui, sans-serif; }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: radial-gradient(circle, rgba(250,255,0,0.025) 1px, transparent 1px);
+      background-size: 28px 28px; pointer-events: none; z-index: 0;
     }
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background-color: #D4AF37;
-      transition: width 0.2s;
-    }
-    .nav-link:hover { color: #D4AF37; }
+    .nav-link { position: relative; color: #cbd5e1; transition: color 0.2s; padding-bottom: 2px; font-weight: 700; }
+    .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px; background: linear-gradient(90deg, #FAFF00, #FF6B35); transition: width 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+    .nav-link:hover { color: #FAFF00; }
     .nav-link:hover::after { width: 100%; }
-    .nav-link.active { color: #D4AF37; }
+    .nav-link.active { color: #FAFF00; }
     .nav-link.active::after { width: 100%; }
-    .card-hover {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .card-hover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(212,175,55,0.12), 0 8px 16px rgba(0,0,0,0.4);
-    }
-    .btn-gold {
-      background: linear-gradient(135deg, #D4AF37 0%, #B8960C 100%);
-      color: #0A0E1A;
-      font-weight: 600;
-      transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
-      min-height: 44px;
-      min-width: 44px;
-    }
-    .btn-gold:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(212,175,55,0.35);
-      filter: brightness(1.08);
-    }
-    .btn-gold:active { transform: scale(0.95); }
-    .btn-outline {
-      border: 1.5px solid #D4AF37;
-      color: #D4AF37;
-      background: transparent;
-      font-weight: 600;
-      transition: background 0.2s, color 0.2s, transform 0.2s;
-      min-height: 44px;
-      min-width: 44px;
-    }
-    .btn-outline:hover {
-      background: #D4AF37;
-      color: #0A0E1A;
-      transform: scale(1.05);
-    }
-    .btn-ghost {
-      color: #94a3b8;
-      background: transparent;
-      border: 1.5px solid rgba(148,163,184,0.25);
-      font-weight: 500;
-      transition: color 0.2s, border-color 0.2s, transform 0.2s;
-      min-height: 44px;
-      min-width: 44px;
-    }
-    .btn-ghost:hover {
-      color: #D4AF37;
-      border-color: #D4AF37;
-      transform: scale(1.05);
-    }
-    /* Gallery */
-    .gallery-container { position: relative; overflow: hidden; aspect-ratio: 4/3; background: #0F1629; }
+    .card-hover { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease; }
+    .card-hover:hover { transform: translateY(-8px) rotate(-0.5deg); box-shadow: 0 24px 48px rgba(250,255,0,0.15), 0 8px 16px rgba(0,0,0,0.5); }
+    .manga-card { position: relative; }
+    .manga-card::before { content: ''; position: absolute; inset: -2px; border-radius: inherit; background: linear-gradient(135deg, #FAFF00, #FF6B35, #BF5FFF, #00F5FF); opacity: 0; transition: opacity 0.3s; z-index: -1; }
+    .manga-card:hover::before { opacity: 1; }
+    .btn-gold { background: linear-gradient(135deg, #FAFF00 0%, #FF6B35 100%); color: #0D0A1A; font-weight: 900; font-family: 'Nunito', sans-serif; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s, filter 0.2s; min-height: 44px; min-width: 44px; text-transform: uppercase; letter-spacing: 0.03em; }
+    .btn-gold:hover { transform: scale(1.08) rotate(-1deg); box-shadow: 0 8px 24px rgba(250,255,0,0.5), 0 4px 12px rgba(255,107,53,0.4); filter: brightness(1.1); }
+    .btn-gold:active { transform: scale(0.94); }
+    .btn-outline { border: 2px solid #FAFF00; color: #FAFF00; background: transparent; font-weight: 800; transition: background 0.2s, color 0.2s, transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s; min-height: 44px; min-width: 44px; }
+    .btn-outline:hover { background: #FAFF00; color: #0D0A1A; transform: scale(1.06); box-shadow: 0 0 16px rgba(250,255,0,0.5); }
+    .btn-ghost { color: #94a3b8; background: transparent; border: 1.5px solid rgba(148,163,184,0.3); font-weight: 700; transition: color 0.2s, border-color 0.2s, transform 0.2s; min-height: 44px; min-width: 44px; }
+    .btn-ghost:hover { color: #FAFF00; border-color: #FAFF00; transform: scale(1.04); }
+    .gallery-container { position: relative; overflow: hidden; aspect-ratio: 4/3; background: #130F2A; }
     .gallery-track { display: flex; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); height: 100%; }
     .gallery-slide { flex-shrink: 0; width: 100%; height: 100%; }
     .gallery-slide img { width: 100%; height: 100%; object-fit: cover; }
     .gallery-dots { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
-    .gallery-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: rgba(255,255,255,0.4);
-      border: none; cursor: pointer;
-      transition: background 0.2s, transform 0.2s;
-      min-width: 20px; min-height: 20px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .gallery-dot.active { background: #D4AF37; transform: scale(1.2); }
-    .gallery-arrow {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      background: rgba(10,14,26,0.7); border: 1px solid rgba(212,175,55,0.3);
-      color: #D4AF37; border-radius: 50%;
-      width: 32px; height: 32px; min-width: 44px; min-height: 44px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: background 0.2s, transform 0.2s;
-    }
-    .gallery-arrow:hover { background: rgba(212,175,55,0.2); transform: translateY(-50%) scale(1.1); }
+    .gallery-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.4); border: none; cursor: pointer; transition: background 0.2s, transform 0.2s; min-width: 20px; min-height: 20px; display: flex; align-items: center; justify-content: center; }
+    .gallery-dot.active { background: #FAFF00; transform: scale(1.3); box-shadow: 0 0 8px #FAFF00; }
+    .gallery-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(13,10,26,0.8); border: 1px solid rgba(250,255,0,0.4); color: #FAFF00; border-radius: 50%; width: 32px; height: 32px; min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s, transform 0.2s; }
+    .gallery-arrow:hover { background: rgba(250,255,0,0.2); transform: translateY(-50%) scale(1.15); }
     .gallery-arrow.prev { left: 4px; }
     .gallery-arrow.next { right: 4px; }
-    /* Modal */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(4px); z-index: 50;
-      display: flex; align-items: center; justify-content: center;
-      padding: 1rem;
-    }
-    .modal-box {
-      background: #0F1629; border: 1px solid rgba(212,175,55,0.2);
-      border-radius: 1rem; max-width: 600px; width: 100%;
-      max-height: 90vh; overflow-y: auto;
-      animation: slideUp 0.3s ease-out;
-    }
-    /* Notification */
-    .toast {
-      background: rgba(15,22,41,0.95); border: 1px solid rgba(212,175,55,0.3);
-      color: #f1f5f9; padding: 12px 16px; border-radius: 8px;
-      font-size: 0.875rem; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      animation: slideDown 0.3s ease-out;
-      transition: opacity 0.5s;
-    }
-    /* Hamburger */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .modal-box { background: #130F2A; border: 1px solid rgba(250,255,0,0.25); border-radius: 1rem; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; animation: bounceIn 0.4s cubic-bezier(0.34,1.56,0.64,1); box-shadow: 0 0 40px rgba(250,255,0,0.1); }
+    .toast { background: rgba(19,15,42,0.97); border: 1px solid rgba(250,255,0,0.35); color: #f1f5f9; padding: 12px 16px; border-radius: 10px; font-size: 0.875rem; font-weight: 700; box-shadow: 0 8px 24px rgba(0,0,0,0.5), 0 0 16px rgba(250,255,0,0.1); animation: slideDown 0.35s cubic-bezier(0.34,1.56,0.64,1); transition: opacity 0.5s; }
     .mobile-menu { display: none; }
-    .mobile-menu.open { display: block; }
-    /* Skeleton */
-    .skeleton { background: linear-gradient(90deg, #1A2340 25%, #243050 50%, #1A2340 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    .mobile-menu.open { display: block; animation: slideDown 0.3s ease-out; }
+    .skeleton { background: linear-gradient(90deg, #1E1840 25%, #2A2260 50%, #1E1840 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
     @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    /* Viewport entry animation */
-    .animate-on-scroll { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .animate-on-scroll { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34,1.56,0.64,1); }
     .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
-    /* Admin panel */
-    .admin-modal-box {
-      background: #0F1629; border: 1px solid rgba(212,175,55,0.2);
-      border-radius: 1rem; width: 100%; max-width: 860px;
-      max-height: 92vh; overflow-y: auto;
-      animation: slideUp 0.3s ease-out;
-    }
-    .input-field {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(212,175,55,0.25);
-      color: #f1f5f9;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      border-radius: 0.5rem;
-      padding: 0.6rem 0.85rem;
-      width: 100%;
-      font-size: 0.875rem;
-    }
-    .input-field::placeholder { color: rgba(148,163,184,0.6); }
-    .input-field:focus { outline: none; border-color: #D4AF37; box-shadow: 0 0 0 3px rgba(212,175,55,0.12); }
+    @keyframes slideDown { 0% { transform: translateY(-16px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    @keyframes slideUp { 0% { transform: translateY(24px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes bounceIn { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes pulseGlow { 0%,100% { box-shadow: 0 0 8px rgba(250,255,0,0.4); } 50% { box-shadow: 0 0 24px rgba(250,255,0,0.8), 0 0 48px rgba(255,107,53,0.4); } }
+    @keyframes pop { 0% { transform: scale(0.8); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
+    @keyframes zap { 0% { text-shadow: 0 0 8px #FAFF00, 0 0 20px #FAFF00; } 100% { text-shadow: 0 0 16px #FF6B35, 0 0 40px #FF6B35; } }
+    .neon-text { text-shadow: 0 0 10px currentColor, 0 0 20px currentColor; }
+    .speed-lines { position: absolute; inset: 0; background: repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(250,255,0,0.012) 0.5deg, transparent 1deg); pointer-events: none; }
+    .energy-bar { height: 3px; background: linear-gradient(90deg, #FAFF00, #FF6B35); box-shadow: 0 0 8px #FAFF00; }
+    .admin-modal-box { background: #130F2A; border: 1px solid rgba(250,255,0,0.2); border-radius: 1rem; width: 100%; max-width: 860px; max-height: 92vh; overflow-y: auto; animation: bounceIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    .input-field { background: rgba(255,255,255,0.06); border: 1px solid rgba(250,255,0,0.2); color: #f1f5f9; transition: border-color 0.2s, box-shadow 0.2s; border-radius: 0.5rem; padding: 0.6rem 0.85rem; width: 100%; font-size: 0.875rem; font-family: 'Nunito', sans-serif; }
+    .input-field::placeholder { color: rgba(148,163,184,0.5); }
+    .input-field:focus { outline: none; border-color: #FAFF00; box-shadow: 0 0 0 3px rgba(250,255,0,0.12); }
     .btn-danger { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); border-radius: 0.5rem; padding: 0.35rem 0.75rem; font-size: 0.75rem; cursor: pointer; transition: background 0.2s; }
     .btn-danger:hover { background: rgba(239,68,68,0.3); }
-    .drop-zone {
-      border: 2px dashed rgba(212,175,55,0.3);
-      border-radius: 0.75rem;
-      padding: 2rem;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .drop-zone:hover, .drop-zone.drag-over { border-color: #D4AF37; background: rgba(212,175,55,0.05); }
-    .product-row { border-bottom: 1px solid rgba(212,175,55,0.08); }
+    .drop-zone { border: 2px dashed rgba(250,255,0,0.3); border-radius: 0.75rem; padding: 2rem; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+    .drop-zone:hover, .drop-zone.drag-over { border-color: #FAFF00; background: rgba(250,255,0,0.04); }
+    .product-row { border-bottom: 1px solid rgba(250,255,0,0.07); }
     .product-row:last-child { border-bottom: none; }
-    /* Admin tabs */
-    .admin-tab-btn { color: #94a3b8; }
-    .admin-tab-btn.active { background: rgba(212,175,55,0.15); color: #D4AF37; font-weight: 600; }
-    .admin-tab-btn:hover:not(.active) { color: #D4AF37; background: rgba(212,175,55,0.07); }
+    .admin-tab-btn { color: #94a3b8; font-weight: 700; }
+    .admin-tab-btn.active { background: rgba(250,255,0,0.12); color: #FAFF00; font-weight: 800; }
+    .admin-tab-btn:hover:not(.active) { color: #FAFF00; background: rgba(250,255,0,0.06); }
   </style>
 </head>
 <body class="font-sans bg-navy-900 text-slate-100 min-h-screen">
@@ -210,26 +132,26 @@
   <div id="notification-area" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full" aria-live="polite"></div>
 
   <!-- Navbar -->
-  <header class="sticky top-0 z-40 bg-navy-900/95 backdrop-blur-md border-b border-gold-400/10">
+  <header class="sticky top-0 z-40 bg-deep-900/95 backdrop-blur-md border-b border-volt-400/15" style="background-color:rgba(13,10,26,0.95)">
     <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
       <div class="flex items-center justify-between h-16">
 
         <!-- Brand -->
-        <a href="/" class="flex items-center gap-2 group min-h-[44px]" aria-label="LUXE STORE home">
-          <span class="text-gold-400 text-xl group-hover:scale-110 transition-transform duration-200" aria-hidden="true">◆</span>
-          <span class="text-lg font-bold tracking-widest text-white uppercase" data-content-key="brand_name">Luxe Store</span>
+        <a href="/" class="flex items-center gap-2 group min-h-[44px]" aria-label="Kuryentipid home">
+          <span class="text-2xl animate-[zap_0.8s_ease-in-out_infinite_alternate]" aria-hidden="true" style="animation: zap 0.8s ease-in-out infinite alternate; display:inline-block;">⚡</span>
+          <span class="font-manga text-xl tracking-widest text-white uppercase" data-content-key="brand_name" style="font-family:'Bangers',cursive; letter-spacing:0.1em; color:#FAFF00; text-shadow: 2px 2px 0 #FF6B35, 0 0 20px rgba(250,255,0,0.5);">Kuryentipid</span>
         </a>
 
         <!-- Desktop nav links -->
         <div class="hidden sm:flex items-center gap-8">
           <a href="/" class="nav-link active text-sm font-medium min-h-[44px] flex items-center" data-content-key="nav_home_label">Home</a>
-          <a href="/" class="nav-link text-sm font-medium min-h-[44px] flex items-center" data-content-key="nav_products_label">Products</a>
+          <a href="#products" class="nav-link text-sm font-medium min-h-[44px] flex items-center" data-content-key="nav_products_label">Products</a>
           <a href="/cart" class="nav-link text-sm font-medium min-h-[44px] flex items-center">
             <span data-content-key="nav_cart_label">Cart</span>
             <span id="cart-badge" class="ml-1.5 hidden bg-gold-400 text-navy-900 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">0</span>
           </a>
           <a href="/orders" class="nav-link text-sm font-medium min-h-[44px] flex items-center" data-content-key="nav_orders_label">Orders</a>
-          <button id="admin-nav-btn" onclick="openAdminPanel()" class="nav-link text-sm font-medium min-h-[44px] flex items-center text-gold-400 hover:text-gold-500 hidden" title="Admin panel">⚙ Manage</button>
+          <button id="admin-nav-btn" onclick="openAdminPanel()" class="nav-link text-sm font-medium min-h-[44px] flex items-center text-gold-400 hover:text-gold-500 hidden" title="Admin panel" aria-hidden="true" tabindex="-1">⚙ Manage</button>
         </div>
 
         <!-- User menu -->
@@ -263,7 +185,7 @@
       <div id="mobile-menu" class="mobile-menu sm:hidden border-t border-gold-400/10 py-4" aria-label="Mobile navigation">
         <div class="flex flex-col gap-1">
           <a href="/" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center" data-content-key="nav_home_label">Home</a>
-          <a href="/" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center" data-content-key="nav_products_label">Products</a>
+          <a href="#products" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center" data-content-key="nav_products_label">Products</a>
           <a href="/cart" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center" data-content-key="nav_cart_label">Cart</a>
           <a href="/orders" class="nav-link text-sm font-medium px-2 py-3 min-h-[44px] flex items-center" data-content-key="nav_orders_label">Orders</a>
           <div class="pt-2 border-t border-gold-400/10 mt-2">
@@ -279,20 +201,33 @@
   </header>
 
   <!-- Hero section -->
-  <section class="relative overflow-hidden bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900 py-20 sm:py-28">
-    <div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(circle at 20% 50%, #D4AF37 0%, transparent 50%), radial-gradient(circle at 80% 20%, #D4AF37 0%, transparent 40%);"></div>
+  <section class="relative overflow-hidden py-20 sm:py-28" style="background: linear-gradient(135deg, #0D0A1A 0%, #1E1840 50%, #0D0A1A 100%);">
+    <!-- Speed lines background -->
+    <div class="speed-lines absolute inset-0"></div>
+    <!-- Floating energy orbs -->
+    <div class="absolute top-10 left-10 w-4 h-4 rounded-full bg-volt-400 opacity-60" style="animation: float 3s ease-in-out infinite; box-shadow: 0 0 16px #FAFF00;"></div>
+    <div class="absolute top-20 right-20 w-3 h-3 rounded-full bg-solar-400 opacity-50" style="animation: float 4s ease-in-out infinite 1s; box-shadow: 0 0 12px #FF6B35;"></div>
+    <div class="absolute bottom-16 left-1/4 w-2 h-2 rounded-full opacity-70" style="background:#00F5FF; animation: float 3.5s ease-in-out infinite 0.5s; box-shadow: 0 0 10px #00F5FF;"></div>
+    <div class="absolute bottom-10 right-1/3 w-5 h-5 rounded-full opacity-40" style="background:#BF5FFF; animation: float 5s ease-in-out infinite 2s; box-shadow: 0 0 20px #BF5FFF;"></div>
+
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <div class="animate-on-scroll">
-        <p class="text-gold-400 text-sm font-semibold tracking-[0.3em] uppercase mb-4">Premium Collection</p>
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6" data-content-key="hero_headline">
-          Discover Luxury Redefined
+        <div class="inline-block mb-4 px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase" style="background: rgba(250,255,0,0.1); border: 1px solid rgba(250,255,0,0.3); color: #FAFF00;">
+          ⚡ Solar-Powered Savings Unlocked!
+        </div>
+        <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold text-white leading-tight mb-6" data-content-key="hero_headline" style="font-family:'Bangers',cursive; letter-spacing:0.05em; text-shadow: 3px 3px 0 #FF6B35, 0 0 40px rgba(250,255,0,0.3);">
+          Sun in. Power out.<br class="hidden sm:block" /> <span style="color:#FAFF00;">Comfort always.</span> ⚡
         </h1>
-        <p class="text-gray-400 text-lg max-w-2xl mx-auto mb-8" data-content-key="hero_subheadline">
-          Curated premium products crafted for those who appreciate the finest things in life.
+        <p class="text-gray-300 text-lg max-w-2xl mx-auto mb-8 font-semibold" data-content-key="hero_subheadline">
+          Solar-powered appliances and gadgets built for real life. Save on bills, save the planet — without sacrificing comfort.
         </p>
-        <a href="#products" class="btn-gold inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base">
-          <span data-content-key="cta_shop_now">Shop Now</span>
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <!-- Energy bar decoration -->
+        <div class="max-w-xs mx-auto mb-8 rounded-full overflow-hidden" style="background: rgba(255,255,255,0.1); height:4px;">
+          <div class="energy-bar rounded-full" style="animation: energyFill 2s ease-out forwards;"></div>
+        </div>
+        <a href="#products" class="btn-gold inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base" style="font-family:'Bangers',cursive; font-size:1.2rem; letter-spacing:0.05em;">
+          <span data-content-key="cta_shop_now">Mag-Shop Na! ⚡</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
           </svg>
         </a>
@@ -304,10 +239,10 @@
   <main id="products" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="flex items-center justify-between mb-10 animate-on-scroll">
       <div>
-        <h2 class="text-2xl sm:text-3xl font-bold text-white" data-content-key="section_heading">Our Collection</h2>
-        <p class="text-gray-400 mt-1 text-sm" data-content-key="section_subheading">Handpicked premium items</p>
+        <h2 class="text-2xl sm:text-3xl font-bold text-white" data-content-key="section_heading" style="font-family:'Bangers',cursive; letter-spacing:0.05em; color:#FAFF00; text-shadow: 2px 2px 0 #FF6B35;">⚡ Our Solar Collection</h2>
+        <p class="text-gray-400 mt-1 text-sm font-semibold" data-content-key="section_subheading">Sun in. Power out. Comfort always.</p>
       </div>
-      <span id="product-count" class="text-sm text-gray-500"></span>
+      <span id="product-count" class="text-sm font-bold px-3 py-1 rounded-full" style="background:rgba(250,255,0,0.1); color:#FAFF00; border:1px solid rgba(250,255,0,0.3);"></span>
     </div>
 
     <!-- Loading skeleton -->
@@ -320,17 +255,17 @@
 
     <!-- Empty state -->
     <div id="products-empty" class="hidden text-center py-24">
-      <div class="text-gold-400 text-6xl mb-4" aria-hidden="true">◆</div>
-      <h3 class="text-xl font-semibold text-white mb-2">No products available</h3>
-      <p class="text-gray-400" data-content-key="empty_cart_message">Check back soon for new arrivals.</p>
+      <div class="text-6xl mb-4 animate-[float_3s_ease-in-out_infinite]" aria-hidden="true" style="animation: float 3s ease-in-out infinite; display:inline-block;">🔋</div>
+      <h3 class="text-xl font-bold text-white mb-2" style="font-family:'Bangers',cursive; letter-spacing:0.05em;">No products yet!</h3>
+      <p class="text-gray-400 font-semibold">Check back soon — new solar items are coming! ⚡</p>
     </div>
 
     <!-- Error state -->
     <div id="products-error" class="hidden text-center py-24">
-      <div class="text-red-400 text-5xl mb-4" aria-hidden="true">!</div>
-      <h3 class="text-xl font-semibold text-white mb-2">Failed to load products</h3>
-      <p class="text-gray-400 mb-6">There was an error loading the product catalog.</p>
-      <button onclick="loadProducts()" class="btn-gold px-6 py-3 rounded-lg">Try Again</button>
+      <div class="text-5xl mb-4" aria-hidden="true">💥</div>
+      <h3 class="text-xl font-bold text-white mb-2" style="font-family:'Bangers',cursive;">Oops! Something went wrong!</h3>
+      <p class="text-gray-400 mb-6 font-semibold">Could not load products. Please try again!</p>
+      <button onclick="loadProducts()" class="btn-gold px-6 py-3 rounded-lg">↻ Try Again</button>
     </div>
   </main>
 
@@ -397,34 +332,35 @@
   </div>
 
   <!-- Footer -->
-  <footer class="bg-navy-800 border-t border-gold-400/10 mt-20">
+  <footer style="background:#130F2A; border-top: 1px solid rgba(250,255,0,0.1);" class="mt-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
         <div>
           <div class="flex items-center gap-2 mb-4">
-            <span class="text-gold-400 text-xl" aria-hidden="true">◆</span>
-            <span class="text-lg font-bold tracking-widest text-white uppercase" data-content-key="brand_name">(Placeholder)</span>
+            <span class="text-2xl" aria-hidden="true" style="animation: float 3s ease-in-out infinite; display:inline-block;">⚡</span>
+            <span class="font-bold tracking-widest uppercase" data-content-key="brand_name" style="font-family:'Bangers',cursive; font-size:1.25rem; color:#FAFF00; text-shadow: 1px 1px 0 #FF6B35;">Kuryentipid</span>
           </div>
-          <p class="text-gray-400 text-sm leading-relaxed" data-content-key="footer_tagline">Premium products for discerning customers. Quality and elegance in every item.</p>
+          <p class="text-gray-400 text-sm leading-relaxed font-semibold" data-content-key="footer_tagline">Sun in. Power out. Comfort always. — Kuryentipid brings solar energy to every home.</p>
         </div>
         <div>
-          <h3 class="text-white font-semibold mb-4">Quick Links</h3>
+          <h3 class="font-bold mb-4" style="color:#FAFF00; font-family:'Bangers',cursive; letter-spacing:0.05em;">⚡ Quick Links</h3>
           <ul class="space-y-2 text-sm">
-            <li><a href="/" class="text-gray-400 hover:text-gold-400 transition-colors duration-200 min-h-[44px] flex items-center">Home</a></li>
-            <li><a href="/cart" class="text-gray-400 hover:text-gold-400 transition-colors duration-200 min-h-[44px] flex items-center">Cart</a></li>
-            <li><a href="/orders" class="text-gray-400 hover:text-gold-400 transition-colors duration-200 min-h-[44px] flex items-center">Orders</a></li>
+            <li><a href="/" class="text-gray-400 hover:text-yellow-300 transition-colors duration-200 min-h-[44px] flex items-center font-semibold">🏠 Home</a></li>
+            <li><a href="/cart" class="text-gray-400 hover:text-yellow-300 transition-colors duration-200 min-h-[44px] flex items-center font-semibold">🛒 Cart</a></li>
+            <li><a href="/orders" class="text-gray-400 hover:text-yellow-300 transition-colors duration-200 min-h-[44px] flex items-center font-semibold">📦 Orders</a></li>
           </ul>
         </div>
         <div>
-          <h3 class="text-white font-semibold mb-4">Support</h3>
-          <ul class="space-y-2 text-sm">
-            <li><span class="text-gray-400">support@azahi.com</span></li>
-            <li><span class="text-gray-400">Mon–Fri, 9am–6pm UTC+8</span></li>
+          <h3 class="font-bold mb-4" style="color:#FAFF00; font-family:'Bangers',cursive; letter-spacing:0.05em;">🔋 Support</h3>
+          <ul class="space-y-2 text-sm font-semibold">
+            <li><span class="text-gray-400">⚡ support@kuryentipid.ph</span></li>
+            <li><span class="text-gray-400">🌞 Mon–Fri, 8am–5pm PHT</span></li>
+            <li><span class="text-gray-400">🔋 Solar-powered customer service!</span></li>
           </ul>
         </div>
       </div>
-      <div class="border-t border-gold-400/10 mt-8 pt-8 text-center text-sm text-gray-600" data-content-key="footer_copyright">
-        &copy; 2026. All rights reserved.
+      <div class="mt-8 pt-8 text-center text-sm font-bold" style="border-top: 1px solid rgba(250,255,0,0.1); color: rgba(250,255,0,0.4);" data-content-key="footer_copyright">
+        © 2024 Kuryentipid. All rights reserved.
       </div>
     </div>
   </footer>
@@ -665,13 +601,14 @@
       const area = document.getElementById('notification-area');
       const toast = document.createElement('div');
       const colors = type === 'success'
-        ? 'bg-green-900/90 border-green-500/40 text-green-300'
+        ? 'border-yellow-400/50 text-yellow-200'
         : type === 'error'
-        ? 'bg-red-900/90 border-red-500/40 text-red-300'
-        : 'bg-navy-800/95 border-gold-400/30 text-gray-200';
-      toast.className = `toast border ${colors} px-4 py-3 rounded-lg text-sm shadow-lg`;
+        ? 'border-red-500/50 text-red-300'
+        : 'border-cyan-400/40 text-cyan-200';
+      const icon = type === 'success' ? '⚡' : type === 'error' ? '💥' : 'ℹ️';
+      toast.className = `toast border ${colors} px-4 py-3 rounded-xl text-sm shadow-lg flex items-center gap-2`;
       toast.setAttribute('role', 'status');
-      toast.textContent = message;
+      toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
       area.appendChild(toast);
       setTimeout(() => {
         toast.style.opacity = '0';
@@ -814,22 +751,31 @@
     // ---- Product card ----
     function createProductCard(product) {
       const card = document.createElement('article');
-      card.className = 'card-hover bg-navy-800 rounded-2xl overflow-hidden border border-gold-400/10 flex flex-col animate-on-scroll';
+      card.className = 'card-hover manga-card rounded-2xl overflow-hidden flex flex-col animate-on-scroll';
+      card.style.cssText = 'background:#130F2A; border:1px solid rgba(250,255,0,0.12); position:relative;';
       card.setAttribute('data-product-id', product.id);
 
       const galleryDiv = document.createElement('div');
       galleryDiv.className = 'gallery-container';
       createGallery(galleryDiv, product.images ? product.images.map(i => i.image_url) : []);
 
+      // Manga-style "NEW" badge
+      const badge = document.createElement('div');
+      badge.style.cssText = 'position:absolute; top:8px; left:8px; z-index:10; background:linear-gradient(135deg,#FAFF00,#FF6B35); color:#0D0A1A; font-family:Bangers,cursive; font-size:0.75rem; letter-spacing:0.05em; padding:2px 8px; border-radius:4px; transform:rotate(-2deg); box-shadow:2px 2px 0 rgba(0,0,0,0.5);';
+      badge.textContent = '⚡ SOLAR';
+      card.appendChild(badge);
+
       const body = document.createElement('div');
       body.className = 'p-4 flex flex-col flex-1';
 
       const name = document.createElement('h3');
-      name.className = 'text-white font-semibold text-base mb-1 line-clamp-2';
+      name.className = 'font-bold text-sm mb-1 line-clamp-2';
+      name.style.cssText = 'color:#f1f5f9; font-family:Nunito,sans-serif; font-weight:800;';
       name.textContent = product.name;
 
       const price = document.createElement('p');
-      price.className = 'text-gold-400 font-bold text-lg mb-4';
+      price.className = 'font-bold text-lg mb-3';
+      price.style.cssText = 'color:#FAFF00; text-shadow: 0 0 8px rgba(250,255,0,0.4); font-family:Orbitron,monospace;';
       price.textContent = formatPrice(product.price);
 
       const actions = document.createElement('div');
@@ -837,25 +783,27 @@
 
       const buyBtn = document.createElement('button');
       buyBtn.className = 'btn-gold col-span-2 rounded-lg px-3 py-2.5 text-sm';
-      buyBtn.textContent = 'Buy Now';
+      buyBtn.style.cssText = 'font-family:Bangers,cursive; letter-spacing:0.05em; font-size:1rem;';
+      buyBtn.textContent = '⚡ Buy Now!';
       buyBtn.setAttribute('aria-label', `Buy ${product.name} now`);
       buyBtn.addEventListener('click', () => handleBuyNow(product));
 
       const cartBtn = document.createElement('button');
       cartBtn.className = 'btn-outline rounded-lg px-3 py-2.5 text-sm';
-      cartBtn.textContent = 'Add to Cart';
+      cartBtn.style.cssText = 'font-family:Nunito,sans-serif; font-weight:800;';
+      cartBtn.textContent = '🛒 Add to Cart';
       cartBtn.setAttribute('aria-label', `Add ${product.name} to cart`);
       cartBtn.addEventListener('click', () => handleAddToCart(product, cartBtn));
 
       const infoBtn = document.createElement('button');
       infoBtn.className = 'btn-ghost rounded-lg px-3 py-2.5 text-xs';
-      infoBtn.textContent = 'Info';
+      infoBtn.textContent = '📖 Info';
       infoBtn.setAttribute('aria-label', `View info for ${product.name}`);
       infoBtn.addEventListener('click', () => showProductInfo(product));
 
       const shippingBtn = document.createElement('button');
       shippingBtn.className = 'btn-ghost rounded-lg px-3 py-2.5 text-xs';
-      shippingBtn.textContent = 'Shipping';
+      shippingBtn.textContent = '🚚 Shipping';
       shippingBtn.setAttribute('aria-label', `View shipping for ${product.name}`);
       shippingBtn.addEventListener('click', () => showShipping(product));
 
@@ -913,7 +861,7 @@
           body: JSON.stringify({ product_id: product.id, quantity: 1 }),
         });
         if (res.ok) {
-          showNotification(`${product.name} added to cart!`, 'success');
+          showNotification(`⚡ ${product.name} added to cart! 🛒`, 'success');
           updateCartBadge();
         } else {
           showNotification('Failed to add to cart.', 'error');

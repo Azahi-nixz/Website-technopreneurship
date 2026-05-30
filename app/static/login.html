@@ -89,15 +89,15 @@
 </head>
 <body class="font-sans min-h-screen flex items-center justify-center relative overflow-hidden">
 
-  <!-- Full-viewport background image -->
+  <!-- Full-viewport background image — solar-powered electronic appliances -->
   <div
     class="absolute inset-0 bg-cover bg-center bg-no-repeat"
-    style="background-image: url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920');"
+    style="background-image: url('https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1920&q=80');"
     role="img"
-    aria-label="Luxury retail store background"
+    aria-label="Solar panels and renewable energy technology background"
   ></div>
   <!-- Dark gradient overlay -->
-  <div class="absolute inset-0 bg-gradient-to-br from-navy-900/90 via-navy-800/80 to-navy-900/90"></div>
+  <div class="absolute inset-0 bg-gradient-to-br from-navy-900/92 via-navy-800/82 to-navy-900/92"></div>
 
   <!-- Notification area -->
   <div id="notification-area" class="fixed top-4 right-4 z-50 flex flex-col gap-2" aria-live="polite"></div>
@@ -109,11 +109,11 @@
       <!-- Brand -->
       <div class="text-center mb-8">
         <div class="inline-flex items-center gap-2 mb-3">
-          <span class="text-gold-400 text-3xl" aria-hidden="true">◆</span>
-          <span class="text-2xl font-bold tracking-widest text-white uppercase" data-content-key="brand_name">Luxe Store</span>
-          <span class="text-gold-400 text-3xl" aria-hidden="true">◆</span>
+          <span class="text-3xl" aria-hidden="true" style="animation: zap 0.8s ease-in-out infinite alternate; display:inline-block;">⚡</span>
+          <span class="text-2xl uppercase" data-content-key="brand_name" style="font-family:'Bangers',cursive; letter-spacing:0.1em; color:#FAFF00; text-shadow: 2px 2px 0 #FF6B35, 0 0 20px rgba(250,255,0,0.5);">Kuryentipid</span>
+          <span class="text-3xl" aria-hidden="true" style="animation: zap 0.8s ease-in-out infinite alternate 0.4s; display:inline-block;">⚡</span>
         </div>
-        <p class="text-gray-400 text-sm tracking-wide">Premium Shopping Experience</p>
+        <p class="text-sm tracking-wide font-bold" style="color:rgba(250,255,0,0.7);">Solar-Powered Savings Awaits! 🌞</p>
       </div>
 
       <!-- Tab switcher -->
@@ -141,12 +141,12 @@
         <form id="login-form" novalidate>
           <div class="space-y-5">
             <div>
-              <label for="login-email" class="block text-sm font-medium text-gray-300 mb-1.5">Email address</label>
+              <label for="login-email" class="block text-sm font-medium text-gray-300 mb-1.5">Email or username</label>
               <input
-                type="email"
+                type="text"
                 id="login-email"
                 name="email"
-                autocomplete="email"
+                autocomplete="username"
                 required
                 placeholder="you@example.com"
                 class="input-field w-full rounded-lg px-4 py-3 text-sm min-h-[44px]"
@@ -180,14 +180,21 @@
               </div>
             </div>
 
+            <!-- Remember me -->
+            <div class="flex items-center gap-2">
+              <input type="checkbox" id="remember-me" class="w-4 h-4 rounded cursor-pointer" style="accent-color:#FAFF00;" />
+              <label for="remember-me" class="text-sm font-semibold cursor-pointer" style="color:rgba(250,255,0,0.8);">🔋 Remember me</label>
+            </div>
+
             <!-- Error message -->
             <div id="login-error" class="hidden rounded-lg bg-red-900/40 border border-red-500/40 px-4 py-3 text-sm text-red-300" role="alert" aria-live="assertive"></div>
 
             <button
               type="submit"
               class="btn-gold w-full rounded-lg px-6 py-3 text-sm min-h-[44px] flex items-center justify-center gap-2"
+              style="font-family:'Bangers',cursive; font-size:1.1rem; letter-spacing:0.05em;"
             >
-              <span id="login-btn-text">Sign In</span>
+              <span id="login-btn-text">⚡ Mag-Sign In!</span>
               <svg id="login-spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
@@ -351,10 +358,8 @@
       const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value;
 
-      if (!email || !password) {
-        showError('login-error', 'Please enter your email and password.');
-        return;
-      }
+      if (!email) { showError('login-error', 'Please enter your email or username.'); return; }
+      if (!password) { showError('login-error', 'Please enter your password.'); return; }
 
       setLoading('login-form', true);
       try {

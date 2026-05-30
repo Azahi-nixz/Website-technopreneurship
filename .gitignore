@@ -17,8 +17,11 @@ env/
 # Flask session files
 flask_session/
 
-# Data store (JSON files contain user data)
-data/
+# Vercel build output
+.vercel/
+
+# API pycache
+api/__pycache__/
 
 # Hypothesis / pytest cache
 .hypothesis/
@@ -26,6 +29,10 @@ data/
 
 # Node
 node_modules/
+
+# Uploaded files
+app/static/uploads/*
+!app/static/uploads/.gitkeep
 
 # OS
 .DS_Store

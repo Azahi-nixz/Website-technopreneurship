@@ -12,9 +12,18 @@ _COL = "products"
 
 
 def _dict_to_image(d: dict) -> ProductImage:
+    # Handle both proper UUIDs and legacy string IDs gracefully
+    try:
+        img_id = UUID(d["id"])
+    except (ValueError, AttributeError):
+        img_id = uuid4()
+    try:
+        prod_id = UUID(d["product_id"])
+    except (ValueError, AttributeError):
+        prod_id = uuid4()
     return ProductImage(
-        id=UUID(d["id"]),
-        product_id=UUID(d["product_id"]),
+        id=img_id,
+        product_id=prod_id,
         image_url=d["image_url"],
         display_order=int(d["display_order"]),
     )
