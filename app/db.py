@@ -16,44 +16,52 @@ Files:
 """
 
 import json
-import os
 import shutil
 from pathlib import Path
 from threading import Lock
 
 # ---------------------------------------------------------------------------
-# Storage directory resolution
+# Storage directory resolution (lazy — resolved on first access)
 # ---------------------------------------------------------------------------
 
 # The canonical seed data lives next to this file's parent (project root).
 _SEED_DIR = Path(__file__).resolve().parent.parent / "data"
 
-# Determine the writable data directory.
-# If the seed directory is writable we use it directly (local dev).
-# Otherwise (Vercel / read-only FS) we shadow it under /tmp.
-def _resolve_data_dir() -> Path:
+_DATA_DIR: Path | None = None
+_LOCKS: dict[str, Lock] = {}
+
+
+def _get_data_dir() -> Path:
+    """Return the writable data directory, resolving it lazily on first call."""
+    global _DATA_DIR
+    if _DATA_DIR is not None:
+        return _DATA_DIR
+
+    # Try the seed directory first (works in local dev).
     test_path = _SEED_DIR / ".write_test"
     try:
         _SEED_DIR.mkdir(exist_ok=True)
         test_path.touch()
         test_path.unlink()
-        return _SEED_DIR
+        _DATA_DIR = _SEED_DIR
+        return _DATA_DIR
     except OSError:
-        # Read-only filesystem — use /tmp shadow copy
-        tmp_dir = Path("/tmp/data")
-        tmp_dir.mkdir(parents=True, exist_ok=True)
-        # Copy any seed files that don't already exist in /tmp
-        if _SEED_DIR.exists():
-            for seed_file in _SEED_DIR.glob("*.json"):
-                dest = tmp_dir / seed_file.name
-                if not dest.exists():
+        pass
+
+    # Read-only filesystem (Vercel) — shadow under /tmp.
+    tmp_dir = Path("/tmp/data")
+    tmp_dir.mkdir(parents=True, exist_ok=True)
+    # Copy seed files that don't already exist in /tmp.
+    if _SEED_DIR.exists():
+        for seed_file in _SEED_DIR.glob("*.json"):
+            dest = tmp_dir / seed_file.name
+            if not dest.exists():
+                try:
                     shutil.copy2(seed_file, dest)
-        return tmp_dir
-
-
-_DATA_DIR: Path = _resolve_data_dir()
-
-_LOCKS: dict[str, Lock] = {}
+                except OSError:
+                    pass
+    _DATA_DIR = tmp_dir
+    return _DATA_DIR
 
 
 def _lock_for(name: str) -> Lock:
@@ -67,7 +75,7 @@ def _lock_for(name: str) -> Lock:
 # ---------------------------------------------------------------------------
 
 def _path(name: str) -> Path:
-    return _DATA_DIR / f"{name}.json"
+    return _get_data_dir() / f"{name}.json"
 
 
 def read_collection(name: str) -> list:
@@ -77,7 +85,7 @@ def read_collection(name: str) -> list:
     """
     p = _path(name)
     if not p.exists():
-        # Fall back to seed directory if available
+        # Fall back to seed directory if available.
         seed = _SEED_DIR / f"{name}.json"
         if seed.exists():
             with open(seed, "r", encoding="utf-8") as f:

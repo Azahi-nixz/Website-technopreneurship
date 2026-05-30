@@ -138,6 +138,10 @@ def _configure_session(app: Flask) -> None:
 
     else:
         # filesystem or any other supported type
+        import os as _os
+        session_dir = app.config.get("SESSION_FILE_DIR", "/tmp/flask_session")
+        _os.makedirs(session_dir, exist_ok=True)
+        app.config["SESSION_FILE_DIR"] = session_dir
         from flask_session import Session
 
         Session(app)
