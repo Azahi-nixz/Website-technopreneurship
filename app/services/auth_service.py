@@ -15,10 +15,8 @@ from uuid import UUID
 import bcrypt
 
 from app.models.user import User
-from app.repositories import user_repository  # noqa: E402 — must come after shim setup
-
-# Import user_repository first so its module-level shim patches psycopg2.errors
-import psycopg2.errors  # noqa: E402
+from app.repositories import user_repository
+from app.repositories.user_repository import UniqueViolation
 
 
 # ---------------------------------------------------------------------------
@@ -88,7 +86,7 @@ def register(email: str, password: str) -> User:
     hashed_str = hashed.decode("utf-8")
     try:
         return user_repository.create_user(email, hashed_str)
-    except psycopg2.errors.UniqueViolation:
+    except UniqueViolation:
         raise ConflictError("Email already registered.")
 
 

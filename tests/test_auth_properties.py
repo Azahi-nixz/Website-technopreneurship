@@ -24,10 +24,9 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 # ---------------------------------------------------------------------------
-# Stub psycopg2 before any app module imports it.
-# psycopg2-binary cannot be installed without a local PostgreSQL installation,
-# so we provide a minimal stub that satisfies the import-time references used
-# by auth_service.py (psycopg2.errors.UniqueViolation).
+# psycopg2 is no longer used — the app uses a pure-Python UniqueViolation.
+# The stub below is kept for backward compatibility with any remaining
+# references in this test file.
 # ---------------------------------------------------------------------------
 
 if "psycopg2" not in sys.modules:

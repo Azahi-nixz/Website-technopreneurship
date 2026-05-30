@@ -20,12 +20,15 @@ def _row_to_user(d: dict) -> User:
     )
 
 
+class UniqueViolation(Exception):
+    """Raised when a duplicate email is detected (mirrors psycopg2 behaviour)."""
+
+
 def create_user(email: str, password_hash: str, is_admin: bool = False) -> User:
     users = read_collection(_COL)
     # Enforce uniqueness
     if any(u["email"].lower() == email.lower() for u in users):
-        import psycopg2.errors  # noqa: F401 — kept for compat
-        raise _UniqueViolation(f"Email {email!r} already registered.")
+        raise UniqueViolation(f"Email {email!r} already registered.")
     user = {
         "id": str(uuid4()),
         "email": email,
@@ -36,15 +39,6 @@ def create_user(email: str, password_hash: str, is_admin: bool = False) -> User:
     users.append(user)
     write_collection(_COL, users)
     return _row_to_user(user)
-
-
-class _UniqueViolation(Exception):
-    """Thin stand-in for psycopg2.errors.UniqueViolation."""
-
-
-# Patch so auth_service's `except psycopg2.errors.UniqueViolation` works
-import psycopg2.errors as _pg_errors  # noqa: E402
-_pg_errors.UniqueViolation = _UniqueViolation  # type: ignore[attr-defined]
 
 
 def find_by_email(email: str) -> Optional[User]:
