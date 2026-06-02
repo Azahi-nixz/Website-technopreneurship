@@ -101,15 +101,28 @@ def _seed_admin() -> None:
 def _configure_session(app: Flask) -> None:
     """Initialise Flask-Session with the configured backend.
 
-    Supported ``SESSION_TYPE`` values:
-    * ``"filesystem"`` — stores sessions in a local directory (dev default).
-    * ``"sqlalchemy"`` — stores sessions in the configured SQL database.
-    * ``"redis"`` — stores sessions in Redis (requires ``REDIS_URL``).
+    On Vercel (SESSION_TYPE=cookie or unset in serverless), we skip
+    Flask-Session entirely and rely on Flask's built-in signed cookie sessions.
+    These are stateless — the session data lives in the cookie itself, signed
+    with SECRET_KEY — so they work across all serverless instances.
+
+    Supported SESSION_TYPE values (opt-in via env var):
+    * ``"cookie"`` or unset — Flask built-in signed cookie sessions (default
+      on Vercel; no server-side storage required).
+    * ``"filesystem"`` — stores sessions in SESSION_FILE_DIR (local dev).
+    * ``"redis"`` — stores sessions in Redis (requires REDIS_URL).
+    * ``"sqlalchemy"`` — stores sessions in a SQL database.
 
     Args:
         app: The Flask application instance.
     """
-    session_type = app.config.get("SESSION_TYPE", "filesystem")
+    session_type = app.config.get("SESSION_TYPE", "cookie")
+
+    if session_type in ("cookie", ""):
+        # Use Flask's built-in signed cookie sessions — no Flask-Session needed.
+        # Ensure the cookie is reasonably sized by not storing large objects.
+        app.config["SESSION_TYPE"] = "cookie"
+        return
 
     if session_type == "redis":
         import redis
@@ -127,17 +140,12 @@ def _configure_session(app: Flask) -> None:
             app.config["SESSION_SQLALCHEMY"] = db
             Session(app)
         except ImportError:
-            # Flask-SQLAlchemy not installed — fall back to filesystem.
             app.logger.warning(
-                "flask_sqlalchemy not installed; falling back to filesystem sessions."
+                "flask_sqlalchemy not installed; falling back to cookie sessions."
             )
-            app.config["SESSION_TYPE"] = "filesystem"
-            from flask_session import Session
+            app.config["SESSION_TYPE"] = "cookie"
 
-            Session(app)
-
-    else:
-        # filesystem or any other supported type
+    elif session_type == "filesystem":
         import os as _os
         session_dir = app.config.get("SESSION_FILE_DIR", "/tmp/flask_session")
         _os.makedirs(session_dir, exist_ok=True)
@@ -145,6 +153,13 @@ def _configure_session(app: Flask) -> None:
         from flask_session import Session
 
         Session(app)
+
+    else:
+        # Unknown type — fall back to cookie sessions.
+        app.logger.warning(
+            f"Unknown SESSION_TYPE {session_type!r}; falling back to cookie sessions."
+        )
+        app.config["SESSION_TYPE"] = "cookie"
 
 
 def _register_blueprints(app: Flask) -> None:

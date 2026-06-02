@@ -63,16 +63,15 @@ class ProductionConfig(BaseConfig):
 
     * DEBUG is disabled.
     * Session cookies are marked Secure, enforcing HTTPS (Requirement 11.1).
-    * SESSION_TYPE defaults to ``"filesystem"`` with /tmp storage so the app
-      works on read-only serverless platforms (Vercel) without any extra
-      infrastructure.  Override via the SESSION_TYPE env var if you have
-      Redis or a database available.
+    * SESSION_TYPE defaults to ``"cookie"`` — Flask's built-in signed cookie
+      sessions, which are stateless and work on serverless platforms like
+      Vercel without any external storage.  Override via SESSION_TYPE env var
+      if you have Redis or a database available.
     """
 
     DEBUG: bool = False
     SESSION_COOKIE_SECURE: bool = True
-    SESSION_TYPE: str = os.environ.get("SESSION_TYPE", "filesystem")
-    SESSION_FILE_DIR: str = os.environ.get("SESSION_FILE_DIR", "/tmp/flask_session")
+    SESSION_TYPE: str = os.environ.get("SESSION_TYPE", "cookie")
 
 
 # Mapping from string name → config class, used by create_app().
