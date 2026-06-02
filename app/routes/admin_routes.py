@@ -13,7 +13,6 @@ Requirements: 13.3, 13.6, 13.9, 13.10, 14.2, 14.4, 14.7, 16.3, 16.5, 16.6
 import functools
 import uuid
 from decimal import Decimal, InvalidOperation
-from pathlib import Path
 
 from flask import Blueprint, jsonify, request, session
 
@@ -22,9 +21,10 @@ from app.services.admin_service import NotFoundError, ValidationError
 
 admin_bp = Blueprint("admin", __name__)
 
-# Where uploaded images are stored
-_UPLOAD_DIR = Path(__file__).resolve().parent.parent / "static" / "uploads"
-_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+# Where uploaded images are stored — resolved lazily to support read-only
+# filesystems (Vercel). Import _UPLOAD_DIR from admin_service so there's
+# a single source of truth.
+from app.services.admin_service import _UPLOAD_DIR  # noqa: E402
 
 
 # ---------------------------------------------------------------------------

@@ -22,8 +22,25 @@ from app.repositories import product_repository
 _ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
 _MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
-_UPLOAD_DIR = Path(__file__).resolve().parent.parent / "static" / "uploads"
-_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+_PREFERRED_UPLOAD_DIR = Path(__file__).resolve().parent.parent / "static" / "uploads"
+
+
+def _get_upload_dir() -> Path:
+    """Return a writable upload directory, falling back to /tmp on Vercel."""
+    try:
+        _PREFERRED_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+        # Quick write test
+        _test = _PREFERRED_UPLOAD_DIR / ".write_test"
+        _test.touch()
+        _test.unlink()
+        return _PREFERRED_UPLOAD_DIR
+    except OSError:
+        tmp = Path("/tmp/uploads")
+        tmp.mkdir(parents=True, exist_ok=True)
+        return tmp
+
+
+_UPLOAD_DIR = _get_upload_dir()
 
 
 # ---------------------------------------------------------------------------
