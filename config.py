@@ -15,6 +15,11 @@ class BaseConfig:
     """Shared defaults for all environments."""
 
     # Flask core
+    # SECRET_KEY is REQUIRED in production for signed cookie sessions.
+    # CRITICAL: Set this in Vercel Environment Variables to a long random
+    # string that NEVER changes across deployments.  Without a stable key,
+    # users will be logged out on every redeploy or when requests hit
+    # different serverless instances.
     SECRET_KEY: str = os.environ.get("SECRET_KEY", "change-me-in-production")
     TESTING: bool = False
 

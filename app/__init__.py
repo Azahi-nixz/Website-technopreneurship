@@ -42,6 +42,13 @@ def create_app(config_name: str = None) -> Flask:
     config_class = get_config(config_name)
     app.config.from_object(config_class)
 
+    # Warn if SECRET_KEY is not set in production (sessions won't work).
+    if config_name == "production" and app.config["SECRET_KEY"] == "change-me-in-production":
+        app.logger.error(
+            "SECRET_KEY is not set! Signed cookie sessions will fail. "
+            "Set SECRET_KEY in Vercel Environment Variables."
+        )
+
     # ── 2. Configure Flask-Session ───────────────────────────────────────────
     _configure_session(app)
 
