@@ -18,18 +18,19 @@ class BaseConfig:
     SECRET_KEY: str = os.environ.get("SECRET_KEY", "change-me-in-production")
     TESTING: bool = False
 
-    # Flask-Session
-    # On Vercel (and other serverless platforms) the only writable directory
-    # is /tmp.  We default to filesystem sessions stored there so the app
-    # works out-of-the-box without any extra infrastructure.
+    # Flask built-in signed cookie session
+    SESSION_COOKIE_NAME: str = "session"
+    SESSION_COOKIE_HTTPONLY: bool = True
+    # "Lax" allows the session cookie on top-level GET navigations (post-login
+    # redirects).  "Strict" would drop the cookie on every redirect, logging
+    # the user out immediately after a successful login.
+    SESSION_COOKIE_SAMESITE: str = "Lax"
+
+    # Flask-Session (only used when SESSION_TYPE != "cookie")
     SESSION_TYPE: str = os.environ.get("SESSION_TYPE", "filesystem")
     SESSION_FILE_DIR: str = os.environ.get("SESSION_FILE_DIR", "/tmp/flask_session")
     SESSION_PERMANENT: bool = False
     SESSION_USE_SIGNER: bool = True
-
-    # Session cookie security (Requirement 11.2)
-    SESSION_COOKIE_HTTPONLY: bool = True
-    SESSION_COOKIE_SAMESITE: str = "Strict"
 
     # Redis (optional — only used when SESSION_TYPE=redis)
     REDIS_URL: str = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
