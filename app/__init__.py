@@ -86,16 +86,23 @@ def create_app(config_name: str = None) -> Flask:
     @app.route("/api/v1/health")
     def health():
         """Health check endpoint with SECRET_KEY diagnostic."""
-        import hashlib
-        secret_key = app.config.get("SECRET_KEY", "")
-        key_hash = hashlib.sha256(secret_key.encode()).hexdigest()[:12]
-        return jsonify({
-            "status": "ok",
-            "secret_key_length": len(secret_key),
-            "secret_key_hash": key_hash,
-            "session_type": app.config.get("SESSION_TYPE"),
-            "warning": "MISSING_SECRET_KEY" if secret_key == "change-me-in-production" else None
-        }), 200
+        try:
+            import hashlib
+            secret_key = app.config.get("SECRET_KEY", "")
+            key_hash = hashlib.sha256(secret_key.encode()).hexdigest()[:12]
+            return jsonify({
+                "status": "ok",
+                "secret_key_length": len(secret_key),
+                "secret_key_hash": key_hash,
+                "session_type": app.config.get("SESSION_TYPE"),
+                "warning": "MISSING_SECRET_KEY" if secret_key == "change-me-in-production" else None
+            }), 200
+        except Exception as e:
+            return jsonify({
+                "status": "error",
+                "error": str(e),
+                "secret_key_set": "SECRET_KEY" in app.config
+            }), 200
 
     # ── 8. Seed admin user from environment variables ────────────────────────
     with app.app_context():
@@ -125,12 +132,21 @@ def _seed_admin() -> None:
     from app.repositories import user_repository
     from app.services.auth_service import hash_password
 
-    existing = user_repository.find_by_email(admin_email)
-    if existing is None:
-        hashed = hash_password(admin_password).decode("utf-8")
-        user_repository.create_user(admin_email, hashed, is_admin=True)
-    elif not existing.is_admin:
-        user_repository.set_admin_flag(admin_email, True)
+    try:
+        existing = user_repository.find_by_email(admin_email)
+        if existing is None:
+            hashed = hash_password(admin_password).decode("utf-8")
+            user_repository.create_user(admin_email, hashed, is_admin=True)
+            print(f"✓ Admin user created: {admin_email}")
+        elif not existing.is_admin:
+            user_repository.set_admin_flag(admin_email, True)
+            print(f"✓ Admin flag set for: {admin_email}")
+        else:
+            print(f"✓ Admin user exists: {admin_email}")
+    except Exception as e:
+        print(f"❌ Failed to seed admin user: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 def _configure_session(app: Flask) -> None:
