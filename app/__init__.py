@@ -42,11 +42,24 @@ def create_app(config_name: str = None) -> Flask:
     config_class = get_config(config_name)
     app.config.from_object(config_class)
 
-    # Warn if SECRET_KEY is not set in production (sessions won't work).
-    if config_name == "production" and app.config["SECRET_KEY"] == "change-me-in-production":
+    # Diagnostic: Log SECRET_KEY status (NOT the actual key) on startup.
+    secret_key = app.config.get("SECRET_KEY", "")
+    if secret_key == "change-me-in-production":
         app.logger.error(
-            "SECRET_KEY is not set! Signed cookie sessions will fail. "
-            "Set SECRET_KEY in Vercel Environment Variables."
+            "❌ CRITICAL: SECRET_KEY is not set! Signed cookie sessions will fail. "
+            "Set SECRET_KEY in Vercel Environment Variables (Settings → Environment Variables)."
+        )
+    elif len(secret_key) < 32:
+        app.logger.warning(
+            f"⚠️  WARNING: SECRET_KEY is too short ({len(secret_key)} chars). "
+            "Use at least 32 characters for security."
+        )
+    else:
+        # Log a hash of the key so we can verify it's consistent across instances
+        import hashlib
+        key_hash = hashlib.sha256(secret_key.encode()).hexdigest()[:8]
+        app.logger.info(
+            f"✓ SECRET_KEY loaded: {len(secret_key)} chars, hash={key_hash}"
         )
 
     # ── 2. Configure Flask-Session ───────────────────────────────────────────
@@ -69,7 +82,22 @@ def create_app(config_name: str = None) -> Flask:
     # ── 6. Register frontend page routes ────────────────────────────────────
     _register_page_routes(app)
 
-    # ── 7. Seed admin user from environment variables ────────────────────────
+    # ── 7. Register health/diagnostic endpoint ──────────────────────────────
+    @app.route("/api/v1/health")
+    def health():
+        """Health check endpoint with SECRET_KEY diagnostic."""
+        import hashlib
+        secret_key = app.config.get("SECRET_KEY", "")
+        key_hash = hashlib.sha256(secret_key.encode()).hexdigest()[:12]
+        return jsonify({
+            "status": "ok",
+            "secret_key_length": len(secret_key),
+            "secret_key_hash": key_hash,
+            "session_type": app.config.get("SESSION_TYPE"),
+            "warning": "MISSING_SECRET_KEY" if secret_key == "change-me-in-production" else None
+        }), 200
+
+    # ── 8. Seed admin user from environment variables ────────────────────────
     with app.app_context():
         _seed_admin()
 
