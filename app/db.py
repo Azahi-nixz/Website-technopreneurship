@@ -1,114 +1,117 @@
-"""JSON file-based data store.
+"""PostgreSQL database connection for Vercel Postgres.
 
-Stores data in JSON files.  On local development the files live in the
-``data/`` directory at the project root.  On read-only serverless platforms
-(e.g. Vercel) the ``data/`` directory is not writable, so the store
-automatically copies the seed files to ``/tmp/data/`` on first access and
-reads/writes from there for the lifetime of the process.
-
-Files:
-  data/users.json       — list of user objects
-  data/products.json    — list of product objects (with embedded images)
-  data/cart_items.json  — list of cart item objects
-  data/orders.json      — list of order objects (with embedded items)
-  data/theme.json       — site theme configuration
-  data/content.json     — site content configuration
+Provides a connection pool and helper to get database connections.
+Falls back to JSON files when POSTGRES_URL is not set (local dev).
 """
 
-import json
-import shutil
-from pathlib import Path
-from threading import Lock
+import os
+from contextlib import contextmanager
 
-# ---------------------------------------------------------------------------
-# Storage directory resolution (lazy — resolved on first access)
-# ---------------------------------------------------------------------------
+# Check if we have a PostgreSQL URL
+POSTGRES_URL = os.environ.get("POSTGRES_URL", "")
+USE_POSTGRES = bool(POSTGRES_URL)
 
-# The canonical seed data lives next to this file's parent (project root).
-_SEED_DIR = Path(__file__).resolve().parent.parent / "data"
+if USE_POSTGRES:
+    import psycopg2
+    from psycopg2 import pool
+    
+    # Create connection pool
+    _connection_pool = None
+    
+    def _get_pool():
+        global _connection_pool
+        if _connection_pool is None:
+            _connection_pool = psycopg2.pool.SimpleConnectionPool(
+                1, 20,  # min and max connections
+                POSTGRES_URL
+            )
+        return _connection_pool
+    
+    @contextmanager
+    def get_connection():
+        """Get a database connection from the pool."""
+        pool = _get_pool()
+        conn = pool.getconn()
+        try:
+            yield conn
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            pool.putconn(conn)
 
-_DATA_DIR: Path | None = None
-_LOCKS: dict[str, Lock] = {}
+else:
+    # Fallback to JSON files for local development
+    import json
+    import shutil
+    from pathlib import Path
+    from threading import Lock
 
+    _SEED_DIR = Path(__file__).resolve().parent.parent / "data"
+    _DATA_DIR = None
+    _LOCKS = {}
 
-def _get_data_dir() -> Path:
-    """Return the writable data directory, resolving it lazily on first call."""
-    global _DATA_DIR
-    if _DATA_DIR is not None:
+    def _get_data_dir():
+        global _DATA_DIR
+        if _DATA_DIR is not None:
+            return _DATA_DIR
+
+        test_path = _SEED_DIR / ".write_test"
+        try:
+            _SEED_DIR.mkdir(exist_ok=True)
+            test_path.touch()
+            test_path.unlink()
+            _DATA_DIR = _SEED_DIR
+            return _DATA_DIR
+        except OSError:
+            pass
+
+        tmp_dir = Path("/tmp/data")
+        tmp_dir.mkdir(parents=True, exist_ok=True)
+        if _SEED_DIR.exists():
+            for seed_file in _SEED_DIR.glob("*.json"):
+                dest = tmp_dir / seed_file.name
+                if not dest.exists():
+                    try:
+                        shutil.copy2(seed_file, dest)
+                    except OSError:
+                        pass
+        _DATA_DIR = tmp_dir
         return _DATA_DIR
 
-    # Try the seed directory first (works in local dev).
-    test_path = _SEED_DIR / ".write_test"
-    try:
-        _SEED_DIR.mkdir(exist_ok=True)
-        test_path.touch()
-        test_path.unlink()
-        _DATA_DIR = _SEED_DIR
-        return _DATA_DIR
-    except OSError:
-        pass
+    def _lock_for(name):
+        if name not in _LOCKS:
+            _LOCKS[name] = Lock()
+        return _LOCKS[name]
 
-    # Read-only filesystem (Vercel) — shadow under /tmp.
-    tmp_dir = Path("/tmp/data")
-    tmp_dir.mkdir(parents=True, exist_ok=True)
-    # Copy seed files that don't already exist in /tmp.
-    if _SEED_DIR.exists():
-        for seed_file in _SEED_DIR.glob("*.json"):
-            dest = tmp_dir / seed_file.name
-            if not dest.exists():
-                try:
-                    shutil.copy2(seed_file, dest)
-                except OSError:
-                    pass
-    _DATA_DIR = tmp_dir
-    return _DATA_DIR
+    def _path(name):
+        return _get_data_dir() / f"{name}.json"
 
-
-def _lock_for(name: str) -> Lock:
-    if name not in _LOCKS:
-        _LOCKS[name] = Lock()
-    return _LOCKS[name]
-
-
-# ---------------------------------------------------------------------------
-# Low-level helpers
-# ---------------------------------------------------------------------------
-
-def _path(name: str) -> Path:
-    return _get_data_dir() / f"{name}.json"
-
-
-def read_collection(name: str) -> list:
-    """Read and return the JSON list stored in ``data/<name>.json``.
-
-    Returns an empty list if the file does not exist yet.
-    """
-    p = _path(name)
-    if not p.exists():
-        # Fall back to seed directory if available.
-        seed = _SEED_DIR / f"{name}.json"
-        if seed.exists():
-            with open(seed, "r", encoding="utf-8") as f:
-                return json.load(f)
-        return []
-    with _lock_for(name):
-        with open(p, "r", encoding="utf-8") as f:
-            return json.load(f)
-
-
-def write_collection(name: str, data: list) -> None:
-    """Atomically write *data* (a list) to ``data/<name>.json``.
-
-    On read-only filesystems this is a no-op (data persists only for the
-    lifetime of the serverless process / warm instance).
-    """
-    p = _path(name)
-    try:
+    def read_collection(name):
+        p = _path(name)
+        if not p.exists():
+            seed = _SEED_DIR / f"{name}.json"
+            if seed.exists():
+                with open(seed, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            return []
         with _lock_for(name):
-            tmp = p.with_suffix(".tmp")
-            with open(tmp, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=2, default=str)
-            tmp.replace(p)
-    except OSError:
-        # Silently ignore write failures on read-only filesystems.
-        pass
+            with open(p, "r", encoding="utf-8") as f:
+                return json.load(f)
+
+    def write_collection(name, data):
+        p = _path(name)
+        try:
+            with _lock_for(name):
+                tmp = p.with_suffix(".tmp")
+                with open(tmp, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=2, default=str)
+                tmp.replace(p)
+        except OSError:
+            pass
+    
+    @contextmanager
+    def get_connection():
+        """Dummy context manager for JSON file backend (no connection needed)."""
+        yield None
