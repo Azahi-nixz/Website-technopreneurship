@@ -113,6 +113,13 @@ def register():
         user = auth_service.register(data["email"], data["password"])
     except ConflictError as exc:
         return _error_response("EMAIL_CONFLICT", str(exc), status=409)
+    except Exception as e:
+        # Log unexpected errors
+        import sys
+        import traceback
+        print(f"❌ Registration error: {type(e).__name__}: {e}", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+        return _error_response("INTERNAL_ERROR", "An unexpected error occurred.", status=500)
 
     return jsonify({"id": str(user.id), "email": user.email}), 201
 
@@ -152,6 +159,13 @@ def login():
         user = auth_service.login(data["email"], data["password"])
     except AuthError as exc:
         return _error_response("UNAUTHORIZED", str(exc), status=401)
+    except Exception as e:
+        # Log unexpected errors
+        import sys
+        import traceback
+        print(f"❌ Login error: {type(e).__name__}: {e}", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+        return _error_response("INTERNAL_ERROR", "An unexpected error occurred.", status=500)
 
     # Store the user's ID and admin flag in the server-side session (Requirement 1.4, 11.2, 13.4).
     session["user_id"] = str(user.id)

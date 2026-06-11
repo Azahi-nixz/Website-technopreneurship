@@ -13,10 +13,11 @@ USE_POSTGRES = bool(POSTGRES_URL)
 
 if USE_POSTGRES:
     import pg8000.native
-    from urllib.parse import urlparse
+    from urllib.parse import urlparse, parse_qs
     
     # Parse the POSTGRES_URL
     parsed = urlparse(POSTGRES_URL)
+    query_params = parse_qs(parsed.query)
     
     _db_params = {
         "host": parsed.hostname,
@@ -24,21 +25,31 @@ if USE_POSTGRES:
         "database": parsed.path[1:],  # Remove leading /
         "user": parsed.username,
         "password": parsed.password,
-        "ssl_context": True,  # Enable SSL
     }
+    
+    # Only add ssl_context if sslmode is not 'disable'
+    sslmode = query_params.get("sslmode", ["prefer"])[0]
+    if sslmode != "disable":
+        _db_params["ssl_context"] = True
     
     @contextmanager
     def get_connection():
         """Get a database connection."""
-        conn = pg8000.native.Connection(**_db_params)
+        conn = None
         try:
+            conn = pg8000.native.Connection(**_db_params)
             yield conn
             conn.commit()
-        except Exception:
-            conn.rollback()
+        except Exception as e:
+            if conn:
+                conn.rollback()
+            # Log the error for debugging
+            import sys
+            print(f"❌ Database error: {type(e).__name__}: {e}", file=sys.stderr)
             raise
         finally:
-            conn.close()
+            if conn:
+                conn.close()
     
     # Define a UniqueViolation exception that matches psycopg2's behavior
     class UniqueViolation(Exception):

@@ -16,7 +16,7 @@ Requirements: 9.1, 9.5, 11.1, 11.2
 
 import os
 
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, jsonify
 
 from config import get_config
 
