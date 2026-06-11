@@ -8,8 +8,7 @@ from app.db import USE_POSTGRES, get_connection
 from app.models.user import User
 
 if USE_POSTGRES:
-    import psycopg2.errors
-    UniqueViolation = psycopg2.errors.UniqueViolation
+    from app.db import UniqueViolation
 else:
     class UniqueViolation(Exception):
         """Raised when a duplicate email is detected."""
@@ -40,19 +39,20 @@ def create_user(email: str, password_hash: str, is_admin: bool = False) -> User:
     """Create a new user."""
     if USE_POSTGRES:
         with get_connection() as conn:
-            cur = conn.cursor()
             user_id = uuid4()
             created_at = datetime.now(timezone.utc)
             try:
-                cur.execute("""
+                result = conn.run("""
                     INSERT INTO users (id, email, password_hash, created_at, is_admin)
-                    VALUES (%s, %s, %s, %s, %s)
+                    VALUES (:id, :email, :password_hash, :created_at, :is_admin)
                     RETURNING id, email, password_hash, created_at, is_admin
-                """, (str(user_id), email, password_hash, created_at, is_admin))
-                row = cur.fetchone()
-                return _row_to_user(row)
-            except psycopg2.errors.UniqueViolation:
-                raise UniqueViolation(f"Email {email!r} already registered.")
+                """, id=str(user_id), email=email, password_hash=password_hash, 
+                   created_at=created_at, is_admin=is_admin)
+                return _row_to_user(result[0])
+            except Exception as e:
+                if "duplicate key" in str(e).lower() or "unique constraint" in str(e).lower():
+                    raise UniqueViolation(f"Email {email!r} already registered.")
+                raise
     else:
         # JSON fallback
         from app.db import read_collection, write_collection
@@ -75,13 +75,11 @@ def find_by_email(email: str) -> Optional[User]:
     """Find user by email (case-insensitive)."""
     if USE_POSTGRES:
         with get_connection() as conn:
-            cur = conn.cursor()
-            cur.execute("""
+            result = conn.run("""
                 SELECT id, email, password_hash, created_at, is_admin
-                FROM users WHERE LOWER(email) = LOWER(%s)
-            """, (email,))
-            row = cur.fetchone()
-            return _row_to_user(row) if row else None
+                FROM users WHERE LOWER(email) = LOWER(:email)
+            """, email=email)
+            return _row_to_user(result[0]) if result else None
     else:
         from app.db import read_collection
         users = read_collection("users")
@@ -95,13 +93,11 @@ def find_by_id(user_id: UUID) -> Optional[User]:
     """Find user by ID."""
     if USE_POSTGRES:
         with get_connection() as conn:
-            cur = conn.cursor()
-            cur.execute("""
+            result = conn.run("""
                 SELECT id, email, password_hash, created_at, is_admin
-                FROM users WHERE id = %s
-            """, (str(user_id),))
-            row = cur.fetchone()
-            return _row_to_user(row) if row else None
+                FROM users WHERE id = :id
+            """, id=str(user_id))
+            return _row_to_user(result[0]) if result else None
     else:
         from app.db import read_collection
         users = read_collection("users")
@@ -124,10 +120,9 @@ def set_admin_flag(email: str, is_admin: bool) -> None:
     """Set the is_admin flag for the user with the given email."""
     if USE_POSTGRES:
         with get_connection() as conn:
-            cur = conn.cursor()
-            cur.execute("""
-                UPDATE users SET is_admin = %s WHERE LOWER(email) = LOWER(%s)
-            """, (is_admin, email))
+            conn.run("""
+                UPDATE users SET is_admin = :is_admin WHERE LOWER(email) = LOWER(:email)
+            """, is_admin=is_admin, email=email)
     else:
         from app.db import read_collection, write_collection
         users = read_collection("users")

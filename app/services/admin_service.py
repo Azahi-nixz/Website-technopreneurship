@@ -81,11 +81,7 @@ def list_all_products() -> List[Product]:
     Returns:
         A list of all Product instances, sorted by creation date descending.
     """
-    from app.db import read_collection
-    products = read_collection("products")
-    result = [product_repository._dict_to_product(p) for p in products]
-    result.sort(key=lambda p: p.created_at, reverse=True)
-    return result
+    return product_repository.list_all()
 
 
 def create_product(name: str, price: Decimal, description: Optional[str] = None) -> Product:

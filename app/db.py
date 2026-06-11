@@ -12,26 +12,25 @@ POSTGRES_URL = os.environ.get("POSTGRES_URL", "")
 USE_POSTGRES = bool(POSTGRES_URL)
 
 if USE_POSTGRES:
-    import psycopg2
-    from psycopg2 import pool
+    import pg8000.native
+    from urllib.parse import urlparse
     
-    # Create connection pool
-    _connection_pool = None
+    # Parse the POSTGRES_URL
+    parsed = urlparse(POSTGRES_URL)
     
-    def _get_pool():
-        global _connection_pool
-        if _connection_pool is None:
-            _connection_pool = psycopg2.pool.SimpleConnectionPool(
-                1, 20,  # min and max connections
-                POSTGRES_URL
-            )
-        return _connection_pool
+    _db_params = {
+        "host": parsed.hostname,
+        "port": parsed.port or 5432,
+        "database": parsed.path[1:],  # Remove leading /
+        "user": parsed.username,
+        "password": parsed.password,
+        "ssl_context": True,  # Enable SSL
+    }
     
     @contextmanager
     def get_connection():
-        """Get a database connection from the pool."""
-        pool = _get_pool()
-        conn = pool.getconn()
+        """Get a database connection."""
+        conn = pg8000.native.Connection(**_db_params)
         try:
             yield conn
             conn.commit()
@@ -39,7 +38,11 @@ if USE_POSTGRES:
             conn.rollback()
             raise
         finally:
-            pool.putconn(conn)
+            conn.close()
+    
+    # Define a UniqueViolation exception that matches psycopg2's behavior
+    class UniqueViolation(Exception):
+        """Raised when a unique constraint is violated."""
 
 else:
     # Fallback to JSON files for local development
